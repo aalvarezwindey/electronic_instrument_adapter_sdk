@@ -44,8 +44,6 @@ setup(
     f.write(setup_file)
 
   print("New setup file generated")
-  print("Building new distribution...")
-  print(os.popen("python setup.py sdist").read().strip())
 
   print("Commiting new changes...")
   os.popen("git add setup.py dist/")
