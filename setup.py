@@ -4,13 +4,13 @@ from distutils.core import setup
 setup(
   name = 'electronic_instrument_adapter_sdk',         # How you named your package folder (MyLib)
   packages = ['electronic_instrument_adapter_sdk'],   # Chose the same as "name"
-  version = '0.1.2',      # Start with a small number and increase it with every change you make
+  version = '0.1.3',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'SDK for Electronic Instrument Adapter',   # Give a short description about your library
   author = 'Ariel Alvarez Windey & Gabriel Robles',                   # Type in your name
   author_email = 'ajalvarez@fi.uba.ar',      # Type in your E-Mail
   url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk/archive/refs/tags/0.1.2.tar.gz',
+  download_url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk/archive/refs/tags/0.1.3.tar.gz',
   keywords = ['SDK', 'ELECTRONIC', 'INSTRUMENT', 'ADAPTER', 'FIUBA'],   # Keywords that define your package best
   install_requires=[],
   classifiers=[
