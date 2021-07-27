@@ -1,19 +1,9 @@
 
-from distutils.core import setup
-from pkgutil import walk_packages
-import electronic_instrument_adapter_sdk
-
-def find_packages(path=__path__, prefix=""):
-  yield prefix
-  prefix = prefix + "."
-  for _, name, ispkg in walk_packages(path, prefix):
-    if ispkg:
-      yield name
-
+from setuptools import setup, find_packages
 
 setup(
   name = 'electronic_instrument_adapter_sdk',         # How you named your package folder (MyLib)
-  packages = list(find_packages(electronic_instrument_adapter_sdk.__path__, electronic_instrument_adapter_sdk.__name__)),
+  packages=find_packages(),
   version = '0.1.5',      # Start with a small number and increase it with every change you make
   license='MIT',        # Chose a license from here: https://help.github.com/articles/licensing-a-repository
   description = 'SDK for Electronic Instrument Adapter',   # Give a short description about your library
