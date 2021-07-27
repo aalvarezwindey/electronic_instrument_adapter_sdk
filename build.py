@@ -6,7 +6,6 @@ import sys
 
 def main():
   existing_tags = os.popen("git --no-pager tag").read().strip()
-  python_version = os.popen("cat .python-version").read().strip()
   print("Last repository tags:")
   print(existing_tags)
   new_version = input("Define new tag using semantic versioning (major.minor.patch): ")
@@ -35,7 +34,7 @@ setup(
     'Intended Audience :: Developers',      # Define that your audience are developers
     'Topic :: Software Development :: Build Tools',
     'License :: OSI Approved :: MIT License',   # Again, pick a license
-    'Programming Language :: Python :: {python_version}',      #Specify which pyhton versions that you want to support
+    'Programming Language :: Python :: 3.6',      #Specify which pyhton versions that you want to support
   ],
 )
 """
