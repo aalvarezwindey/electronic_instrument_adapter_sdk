@@ -12,8 +12,14 @@ def main():
     sys.exit("version already exists")
 
   print("Commiting new changes...")
-  os.popen("git add setup.py dist/")
-  os.popen('git commit -m "preparing for version {}"'.format(new_version))
-  os.popen("git tag {}".format(new_version))
+  r = os.popen("git add setup.py").read()
+  if r:
+    sys.exit("fail adding to stage: {}".format(r))
+  r = os.popen('git commit -m "preparing for version {}"'.format(new_version)).read()
+  if r:
+    sys.exit("fail commiting: {}".format(r))
+  r = os.popen("git tag {}".format(new_version)).read()
+  if r:
+    sys.exit("fail tagging: {}".format(r))
 
 main()
