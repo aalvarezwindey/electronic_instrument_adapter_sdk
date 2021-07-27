@@ -5,8 +5,8 @@ import sys
 
 
 def main():
-  existing_tags = os.popen("git --no-pager tag").read()
-  python_version = os.popen("cat .python-version").read()
+  existing_tags = os.popen("git --no-pager tag").read().strip()
+  python_version = os.popen("cat .python-version").read().strip()
   print("Last repository tags:")
   print(existing_tags)
   new_version = input("Define new tag using semantic versioning (major.minor.patch): ")
@@ -46,7 +46,7 @@ setup(
 
   print("New setup file generated")
   print("Building new distribution...")
-  print(os.popen("python setup.py sdist").read())
+  print(os.popen("python setup.py sdist").read().strip())
 
   print("Commiting new changes...")
   os.popen("git add setup.py dist/")
