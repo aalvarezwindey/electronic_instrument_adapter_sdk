@@ -10,7 +10,7 @@ setup(
   author = 'Ariel Alvarez Windey & Gabriel Robles',                   # Type in your name
   author_email = 'ajalvarez@fi.uba.ar',      # Type in your E-Mail
   url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk',   # Provide either the link to your github or to your website
-  download_url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk/archive/refs/tags/0.1.5.tar.gz',
+  # download_url = 'https://github.com/aalvarezwindey/electronic_instrument_adapter_sdk/archive/refs/tags/0.1.5.tar.gz',
   keywords = ['SDK', 'ELECTRONIC', 'INSTRUMENT', 'ADAPTER', 'FIUBA'],   # Keywords that define your package best
   install_requires=[],
   classifiers=[
