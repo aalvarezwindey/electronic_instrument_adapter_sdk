@@ -54,4 +54,9 @@ setup(
   if r:
     sys.exit("fail tagging: {}".format(r))
 
+  print("Pushing new version...")
+  r = os.popen("git push origin {}".format(new_version)).read()
+  if r:
+    sys.exit("fail pushing: {}".format(r))
+
 main()
