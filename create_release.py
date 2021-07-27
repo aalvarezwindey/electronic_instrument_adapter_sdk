@@ -48,6 +48,8 @@ setup(
   if r:
     sys.exit("fail adding to stage: {}".format(r))
   r = os.popen('git commit -m "preparing for version {}"'.format(new_version)).read()
+
+  print("Creating new tag...")
   r = os.popen("git tag {}".format(new_version)).read()
   if r:
     sys.exit("fail tagging: {}".format(r))
