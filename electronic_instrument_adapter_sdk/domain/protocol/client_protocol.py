@@ -62,7 +62,9 @@ class ClientProtocol:
     self._message_protocol.send_msg(command)
     response_type = self._message_protocol.receive_msg()
     if self.__is_valid_response(response_type):
-      return self._message_protocol.receive_msg(decode=False)
+      format = self._message_protocol.receive_msg()
+      response = self._message_protocol.receive_msg(decode=False)
+      return format, response
     else:
       err = self._message_protocol.receive_msg()
       raise InvalidCommandException("command '{}' for instrument {} is not valid: {}".format(command, id, err))

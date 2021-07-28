@@ -4,10 +4,10 @@ from .api_client.api_client import ApiClient
 
 
 class EIA:
-    def __init__(self, host, port, log_level="WARNING"):
+    def __init__(self, host, port, log_level="WARNING", default_string_response_conversion="double", default_bytearray_response_conversion="bytearray"):
         log.set_level(log_level)
         log.info("Initializating SDK")
-        self._client = ApiClient(host, int(port))
+        self._client = ApiClient(host, int(port), str(default_string_response_conversion), str(default_bytearray_response_conversion))
 
     def disconnect(self):
         self._client.disconnect()
