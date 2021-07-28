@@ -10,10 +10,8 @@ def main():
   parser.add_argument("--port", type=int, help="server port", default=8080)
   args = parser.parse_args()
 
-  # Define server config
   sdk = electronic_instrument_adapter_sdk.EIA(args.host, args.port)
 
-  # List instruments
   instruments = sdk.list_instruments()
   osc_tds1002b = None
   for i in instruments:
@@ -42,8 +40,8 @@ def main():
     plt.figure(figsize=(20,10))
     plt.plot(Time, Volts)
     plt.grid()
-    plt.xlabel("Tiempo")
-    plt.ylabel("Tensión [V]")
+    plt.xlabel("Time")
+    plt.ylabel("Voltage [V]")
     plt.show()
 
   else:
