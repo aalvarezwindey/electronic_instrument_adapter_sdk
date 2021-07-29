@@ -55,18 +55,34 @@ class Instrument:
       print(e)
 
   def format_string_response(self, response, format):
+    try:
       if format == FORMAT_STRING:
         return response.decode()
       if format == FORMAT_INT32:
         return int(float(response.decode()))
       if format == FORMAT_DOUBLE:
         return float(response.decode())
+    except ValueError as e:
+      error = "could not convert '{}' to type '{}'.".format(response, format)
+      log.error(error)
+      raise InvalidCommandException(error)
+    except Exception as e:
+      log.error(e.message)
+      raise InvalidCommandException(e.message)
 
   def format_bytearray_response(self, response, format):
-    if format == FORMAT_BYTEARRAY:
-      return response
-    elif format == FORMAT_BYTES:
-      return bytes(response)
+    try:
+      if format == FORMAT_BYTEARRAY:
+        return response
+      elif format == FORMAT_BYTES:
+        return bytes(response)
+    except ValueError as e:
+      error = "could not convert bytearray response to type '{}'.".format(format)
+      log.error(error)
+      raise InvalidCommandException(error)
+    except Exception as e:
+      log.error(e.message)
+      raise InvalidCommandException(e.message)
 
   def send(self, command, convert_to=None):
     format, response = self._client_protocol.send_command(self.ID, command)
