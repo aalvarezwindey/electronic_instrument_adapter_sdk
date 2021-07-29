@@ -58,5 +58,8 @@ setup(
   r = os.popen("git push origin {}".format(new_version)).read()
   if r:
     sys.exit("fail pushing: {}".format(r))
+  r = os.popen("git push").read()
+  if r:
+    sys.exit("fail pushing: {}".format(r))
 
 main()
