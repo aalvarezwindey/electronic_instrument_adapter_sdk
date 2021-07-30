@@ -36,10 +36,10 @@ class Instrument:
     self._default_bytearray_response_conversion = v
 
   @staticmethod
-  def from_dict(d, client_protocol):
+  def from_dict(d, client_protocol, def_str, def_bytearr):
     mandatory_keys = ['id', 'description', 'brand', 'model', 'status']
     if all(key in d for key in mandatory_keys):
-      return Instrument(id=d['id'], description=d['description'], brand=d['brand'], model=d['model'], status=d['status'], client_protocol=client_protocol)
+      return Instrument(id=d['id'], description=d['description'], brand=d['brand'], model=d['model'], status=d['status'], client_protocol=client_protocol, default_string_response_conversion=def_str, default_bytearray_response_conversion=def_bytearr)
     else:
       raise ElectronicInstrumentAdapterException("missing mandatory keys ({}) in dict {}".format(mandatory_keys, d))
 
