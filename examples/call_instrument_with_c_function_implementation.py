@@ -16,7 +16,7 @@ def main():
       cammera = i
 
   if cammera:
-    result = cammera.send("init_cammera 1 2.0")
+    result = cammera.send("init_cammera 1 2.0", "int")
     print("Result from cammera command: {}".format(result))
   else:
     print("Cammera with ID 'CAM_ID' not found")
