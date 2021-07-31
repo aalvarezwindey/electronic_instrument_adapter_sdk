@@ -4,7 +4,7 @@ from .api_client.api_client import ApiClient
 
 
 class EIA:
-    def __init__(self, host, port, log_level="WARNING", default_string_response_conversion="double", default_bytearray_response_conversion="bytearray"):
+    def __init__(self, host, port, log_level="WARNING", default_string_response_conversion="double", default_bytearray_response_conversion="bytes"):
         log.set_level(log_level)
         log.info("Initializating SDK")
         self._client = ApiClient(host, int(port), str(default_string_response_conversion), str(default_bytearray_response_conversion))
