@@ -73,7 +73,7 @@ class Instrument:
   def format_bytearray_response(self, response, format):
     try:
       if format == FORMAT_BYTEARRAY:
-        return response
+        return bytearray(response)
       elif format == FORMAT_BYTES:
         return bytes(response)
     except ValueError as e:
@@ -96,7 +96,7 @@ class Instrument:
           return self.format_string_response(response, convert_to)
       else:
         return self.format_string_response(response, self._default_string_response_conversion)
-    if format == FORMAT_BYTEARRAY:
+    if format == FORMAT_BYTES:
       if convert_to:
         if convert_to not in AVAILABLE_RESPONSE_FORMATS_FOR_BYTEARRAY:
           error = "command '{}' ask for invalid response format type '{}'. Available formats are {}".format(command, format, AVAILABLE_RESPONSE_FORMATS_FOR_BYTEARRAY)
