@@ -1,9 +1,9 @@
-from .sdk_exception import ElectronicInstrumentAdapterException
+from .sdk_exception import OpenLISAException
 
 DEFAULT_MESSAGE = "instrument not exists"
 
 
-class InstrumentNotFoundException(ElectronicInstrumentAdapterException):
+class InstrumentNotFoundException(OpenLISAException):
     """
     Raised when the requested instrument not exists
   """

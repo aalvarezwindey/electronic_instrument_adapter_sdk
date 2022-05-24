@@ -1,7 +1,7 @@
 import struct
 
-from electronic_instrument_adapter_sdk.logging import log
-from ..exceptions.sdk_exception import ElectronicInstrumentAdapterException
+from Open_LISA_SDK.logging import log
+from ..exceptions.sdk_exception import OpenLISAException
 from ..exceptions.invalid_command import InvalidCommandException
 
 FORMAT_STRING = "str"
@@ -41,7 +41,7 @@ class Instrument:
     if all(key in d for key in mandatory_keys):
       return Instrument(id=d['id'], description=d['description'], brand=d['brand'], model=d['model'], status=d['status'], client_protocol=client_protocol, default_string_response_conversion=def_str, default_bytearray_response_conversion=def_bytearr)
     else:
-      raise ElectronicInstrumentAdapterException("missing mandatory keys ({}) in dict {}".format(mandatory_keys, d))
+      raise OpenLISAException("missing mandatory keys ({}) in dict {}".format(mandatory_keys, d))
 
   def available_commands(self):
     # todo: quizas parsear el JSON aca

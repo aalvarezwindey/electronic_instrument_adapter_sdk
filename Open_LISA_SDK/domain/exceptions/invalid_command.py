@@ -1,8 +1,8 @@
-from .sdk_exception import ElectronicInstrumentAdapterException
+from .sdk_exception import OpenLISAException
 
 DEFAULT_MESSAGE = "invalid command"
 
-class InvalidCommandException(ElectronicInstrumentAdapterException):
+class InvalidCommandException(OpenLISAException):
   """
     Raised when the SDK is initiated and connection with server could not be established
   """

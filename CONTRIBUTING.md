@@ -2,15 +2,17 @@
 
 ## Make your changes
 
-Make your changes in the SDK: `/electronic_instrument_adapter_sdk`
+Make your changes in the SDK: `/Open_LISA_SDK`
 
-Update `setup.py` if necessary:
+Update `setup.template.py` if necessary:
+
 1. Add external packages to `intal_requires` property. Only for no standard Python packages.
 2. Update classifiers if applies (development status and Python version).
 
 ## Publish a new version
 
 After commiting your changes run the script `./create_release.py`. This will:
+
 1. List repository tags.
 2. Request you to enter a new version for the SDK.
 3. Generates the new `setup.py` file (with the version provided).

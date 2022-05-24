@@ -1,7 +1,7 @@
-import electronic_instrument_adapter_sdk
+import Open_LISA_SDK
 
 # Define server config
-sdk = electronic_instrument_adapter_sdk.EIA("127.0.0.1", 8080)
+sdk = Open_LISA_SDK.SDK("127.0.0.1", 8080)
 
 # List instruments
 instruments = sdk.list_instruments()

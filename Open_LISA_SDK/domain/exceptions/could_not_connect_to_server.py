@@ -1,8 +1,8 @@
-from .sdk_exception import ElectronicInstrumentAdapterException
+from .sdk_exception import OpenLISAException
 
 DEFAULT_MESSAGE = "could not connect with server"
 
-class CouldNotConnectToServerException(ElectronicInstrumentAdapterException):
+class CouldNotConnectToServerException(OpenLISAException):
   """
     Raised when the SDK is initiated and connection with server could not be established
   """

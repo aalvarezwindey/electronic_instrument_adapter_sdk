@@ -1,8 +1,9 @@
-# Manual – Electronic Instrument Adapter SDK
+# [DEPRECADO] Manual – Electronic Instrument Adapter SDK
 
 Esta SDK provee una interfaz para integrarse con el [Electronic Instrument Adapter server](https://github.com/aalvarezwindey/electronic-instrument-adapter/). El servidor debe estar integrado con los instrumentos de interés y estar corriendo en una IP y puertos conocidos.
 
 ## Instalación
+
 ```
 pip install electronic-instrument-adapter-sdk
 ```
@@ -10,6 +11,7 @@ pip install electronic-instrument-adapter-sdk
 ## Ejemplos
 
 ### Listar los instrumentos disponibles y registrados
+
 ```python
 import electronic_instrument_adapter_sdk
 import argparse
@@ -161,8 +163,9 @@ if __name__ == "__main__":
 ### Integración con Matlab
 
 Es posible hacer uso de esta SDK vía Matlab. Para ello se debe:
-* Indicar en Matlab la ubicación del intérprete de Python
-* En caso de que un comando responda datos del tipo `bytes`, el casteo más sencillo para trabajarlo en Matlab es a `uint8()``
+
+- Indicar en Matlab la ubicación del intérprete de Python
+- En caso de que un comando responda datos del tipo `bytes`, el casteo más sencillo para trabajarlo en Matlab es a `uint8()``
 
 En el ejemplo siguiente tenemos el caso análogo del gráfico del Osciloscopio Tektronix pero desde Matlab:
 

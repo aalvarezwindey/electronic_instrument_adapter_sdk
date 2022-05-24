@@ -1,4 +1,4 @@
-import electronic_instrument_adapter_sdk
+import Open_LISA_SDK
 import numpy as np
 from struct import unpack
 import matplotlib.pyplot as plt
@@ -10,7 +10,7 @@ def main():
   parser.add_argument("--port", type=int, help="server port", default=8080)
   args = parser.parse_args()
 
-  sdk = electronic_instrument_adapter_sdk.EIA(args.host, args.port)
+  sdk = Open_LISA_SDK.SDK(args.host, args.port)
 
   instruments = sdk.list_instruments()
   osc_tds1002b = None

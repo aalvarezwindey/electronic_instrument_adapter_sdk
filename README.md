@@ -1,8 +1,9 @@
-# Electronic Instrument Adapter SDK
+# [DEPRECATED] Electronic Instrument Adapter SDK
 
 This SDK provides an interface to interact with the [Electronic Instrument Adapter server](https://github.com/aalvarezwindey/electronic-instrument-adapter/). The server must be integrated with the instruments of interest and running in a known IP and port in order to be able to connect via this SDK.
 
 ## Installation
+
 ```
 pip install electronic-instrument-adapter-sdk
 ```
@@ -10,6 +11,7 @@ pip install electronic-instrument-adapter-sdk
 ## Examples
 
 ### List available and registered instruments
+
 ```python
 import electronic_instrument_adapter_sdk
 import argparse

@@ -1,6 +1,6 @@
 import json
 from .message_protocol import MessageProtocol
-from ..exceptions.sdk_exception import ElectronicInstrumentAdapterException
+from ..exceptions.sdk_exception import OpenLISAException
 from ..exceptions.invalid_command import InvalidCommandException
 
 SUCCESS_RESPONSE = "OK"
@@ -36,7 +36,7 @@ class ClientProtocol:
     if self.__is_valid_response(response_type):
       return json.loads(self._message_protocol.receive_msg())
     else:
-      raise ElectronicInstrumentAdapterException(self._message_protocol.receive_msg())
+      raise OpenLISAException(self._message_protocol.receive_msg())
 
   def get_instrument_commands(self, id):
     self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT_COMMANDS)
@@ -45,7 +45,7 @@ class ClientProtocol:
     if self.__is_valid_response(response_type):
       return json.loads(self._message_protocol.receive_msg())
     else:
-      raise ElectronicInstrumentAdapterException(self._message_protocol.receive_msg())
+      raise OpenLISAException(self._message_protocol.receive_msg())
 
   def validate_command(self, id, command):
     self._message_protocol.send_msg(COMMAND_VALIDATE_COMMAND)
