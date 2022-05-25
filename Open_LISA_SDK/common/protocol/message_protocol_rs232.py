@@ -1,9 +1,8 @@
-from Open_LISA_SDK.domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 import serial
 import struct
 from .message_protocol import MessageProtocol
 from ...logging import log
-
+from ...domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 
 # TODO: Duplicado en server y SDK, ver de usar uno en comun
 class MessageProtocolRS232(MessageProtocol):
