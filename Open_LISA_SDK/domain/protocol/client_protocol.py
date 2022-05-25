@@ -1,5 +1,4 @@
 import json
-from .message_protocol import MessageProtocol
 from ..exceptions.sdk_exception import OpenLISAException
 from ..exceptions.invalid_command import InvalidCommandException
 
@@ -14,8 +13,8 @@ COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
 
 class ClientProtocol:
-  def __init__(self, connection):
-      self._message_protocol = MessageProtocol(connection)
+  def __init__(self, message_protocol):
+      self._message_protocol = message_protocol
 
   def __is_valid_response(self, response):
     if response == SUCCESS_RESPONSE:

@@ -14,7 +14,7 @@ setup(
   url = 'https://github.com/aalvarezwindey/Open-LISA-SDK',   # Provide either the link to your github or to your website
   download_url = 'https://github.com/aalvarezwindey/Open-LISA-SDK/archive/refs/tags/{}.tar.gz'.format(VERSION_PLACEHOLDER),
   keywords = ['SDK', 'ELECTRONIC', 'INSTRUMENT', 'ADAPTER', 'FIUBA', 'OPEN', 'LISA', 'LABORATORY'],   # Keywords that define your package best
-  install_requires=[],
+  install_requires=["serial"],
   classifiers=[
     'Development Status :: 4 - Beta',      # Chose either "3 - Alpha", "4 - Beta" or "5 - Production/Stable" as the current state of your package
     'Intended Audience :: Developers',      # Define that your audience are developers
