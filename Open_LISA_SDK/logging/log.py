@@ -1,6 +1,6 @@
 import logging
 
-logger = logging.getLogger('EIA_SDK')
+logger = logging.getLogger('OPEN_LISA_SDK')
 logger.setLevel(logging.DEBUG)
 
 consoleHandler = logging.StreamHandler()
