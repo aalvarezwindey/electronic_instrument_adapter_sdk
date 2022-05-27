@@ -1,7 +1,7 @@
 import Open_LISA_SDK
 
-# Define server config
-sdk = Open_LISA_SDK.SDK("127.0.0.1", 8080)
+sdk = Open_LISA_SDK.SDK()
+sdk.connect_through_RS232()
 
 # List instruments
 instruments = sdk.list_instruments()

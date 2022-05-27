@@ -1,13 +1,8 @@
 import Open_LISA_SDK
-import argparse
 
 def main():
-  parser = argparse.ArgumentParser()
-  parser.add_argument("--host", type=str, help="server host", default="127.0.0.1")
-  parser.add_argument("--port", type=int, help="server port", default=8080)
-  args = parser.parse_args()
-
-  sdk = Open_LISA_SDK.SDK(args.host, args.port)
+  sdk = Open_LISA_SDK.SDK()
+  sdk.connect_through_RS232()
 
   instruments = sdk.list_instruments()
   cammera = None
