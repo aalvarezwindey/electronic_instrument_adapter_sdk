@@ -31,7 +31,7 @@ class ClientProtocol:
     self._message_protocol.send_msg(COMMAND_GET_INSTRUMENTS)
     result = self._message_protocol.receive_msg()
     te = time()
-    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format('get_instruments', te-ts))
+    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_instruments', te-ts))
     return json.loads(result)
 
   def get_instrument(self, id):
@@ -42,7 +42,7 @@ class ClientProtocol:
     response_type = self._message_protocol.receive_msg()
     result_msg = self._message_protocol.receive_msg()
     te = time()
-    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format('get_instrument', te-ts))
+    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_instrument', te-ts))
     if self.__is_valid_response(response_type):
       return json.loads(result_msg)
     else:
@@ -56,7 +56,7 @@ class ClientProtocol:
     response_type = self._message_protocol.receive_msg()
     result_msg = self._message_protocol.receive_msg()
     te = time()
-    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format('get_instrument_commands', te-ts))
+    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_instrument_commands', te-ts))
     if self.__is_valid_response(response_type):
       return json.loads(result_msg)
     else:
@@ -72,11 +72,11 @@ class ClientProtocol:
     if not self.__is_valid_response(response_type):
       err = self._message_protocol.receive_msg()
       te = time()
-      log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format('validate_command', te-ts))
+      log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('validate_command', te-ts))
       raise InvalidCommandException("command '{}' is not valid: {}".format(command, err))
 
     te = time()
-    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format('validate_command', te-ts))
+    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('validate_command', te-ts))
 
   def send_command(self, id, command):
     log.debug("[LATENCY_MEASURE][INIT][{}][command={}]".format('send_command', command))
@@ -89,10 +89,10 @@ class ClientProtocol:
       format = self._message_protocol.receive_msg()
       response = self._message_protocol.receive_msg(decode=False)
       te = time()
-      log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={.8f} seconds]".format('send_command', command, te-ts))
+      log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={} seconds]".format('send_command', command, te-ts))
       return format, response
     else:
       err = self._message_protocol.receive_msg()
       te = time()
-      log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={.8f} seconds]".format('send_command', command, te-ts))
+      log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={} seconds]".format('send_command', command, te-ts))
       raise InvalidCommandException("command '{}' for instrument {} is not valid: {}".format(command, id, err))
