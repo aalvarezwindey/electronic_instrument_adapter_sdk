@@ -66,7 +66,8 @@ class MessageProtocolRS232(MessageProtocol):
         # Helper function to recv n bytes or raise ConnectionResetError if EOF is hit
         data = bytearray()
         while len(data) < n:
-            packet = self._connection.read(n - len(data))
+            bytes_to_read = max(1, min(2048, self._connection.in_waiting, n))
+            packet = self._connection.read(bytes_to_read)
             if not packet:
                 raise ConnectionResetError
             data.extend(packet)
