@@ -1,5 +1,4 @@
 import socket
-import serial
 from ..domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 from ..domain.instruments.instrument import Instrument
 from ..domain.protocol.client_protocol import ClientProtocol
