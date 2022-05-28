@@ -1,4 +1,3 @@
-import serial
 import struct
 from .message_protocol import MessageProtocol
 from ...logging import log
