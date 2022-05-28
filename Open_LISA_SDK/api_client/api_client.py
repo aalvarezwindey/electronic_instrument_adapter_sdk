@@ -44,7 +44,7 @@ class ApiClient:
         connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
         response = connection.read(len(RS232_HANDSHAKE_SERVER_RESPONSE))
         if len(response) > 0 and str(response.decode()) == RS232_HANDSHAKE_SERVER_RESPONSE:
-          log.debug('Detect Open LISA server at {}'.format(endpoint))
+          log.debug('Detect Open LISA server at {} with baudrate {}'.format(endpoint, baudrate))
           break
         else:
           connection = None
