@@ -60,6 +60,7 @@ class ApiClient:
     self._client_protocol = ClientProtocol(MessageProtocolRS232(rs232_connection=connection))
 
   def disconnect(self):
+    self._client_protocol.disconnect()
     if (self._socket_connection):
       try:
         self._socket_connection.shutdown(socket.SHUT_RDWR)

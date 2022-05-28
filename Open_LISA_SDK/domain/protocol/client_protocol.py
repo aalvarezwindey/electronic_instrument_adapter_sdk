@@ -7,6 +7,7 @@ from ...logging import log
 SUCCESS_RESPONSE = "OK"
 ERROR_RESPONSE = "ERROR"
 
+COMMAND_DISCONNECT = "DISCONNECT"
 COMMAND_GET_INSTRUMENTS = "GET_INSTRUMENTS"
 COMMAND_GET_INSTRUMENT = "GET_INSTRUMENT"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
@@ -24,6 +25,14 @@ class ClientProtocol:
       return False
 
     raise Exception("unknown response type: '{}'".format(response))
+
+  def disconnect(self):
+    log.debug("[LATENCY_MEASURE][INIT][{}]".format('disconnect'))
+    ts = time()
+    self._message_protocol.send_msg(COMMAND_GET_INSTRUMENTS)
+    te = time()
+    log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('disconnect', te-ts))
+    return
 
   def get_instruments(self):
     log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_instruments'))
