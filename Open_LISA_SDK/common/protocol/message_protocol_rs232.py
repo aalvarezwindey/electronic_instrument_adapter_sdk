@@ -6,14 +6,14 @@ from ...domain.exceptions.could_not_connect_to_server import CouldNotConnectToSe
 
 # TODO: Duplicado en server y SDK, ver de usar uno en comun
 class MessageProtocolRS232(MessageProtocol):
-    # Constructor with RS232 connection
+    # Constructor with RS232 connection for server side
     def __init__(self, rs232_connection):
         self._connection = rs232_connection
         if not self._connection.isOpen():
             self._connection.open()
 
     # Constructor with discover for client side
-    def __init__(self):
+    def __init__(self, baudrate):
         MAX_COM_TO_TRY = 10
         TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
         RS232_HANDSHAKE_CLIENT_REQUEST = 'OPEN'
@@ -22,7 +22,7 @@ class MessageProtocolRS232(MessageProtocol):
         for i in range(1, MAX_COM_TO_TRY):
             try:
                 endpoint = "COM{}".format(i)
-                connection = serial.Serial(endpoint, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
+                connection = serial.Serial(port=endpoint, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
                 if not connection.isOpen():
                     connection.open()
 

@@ -3,7 +3,7 @@ from .domain.exceptions.instrument_not_found import InstrumentNotFoundException
 from .logging import log
 from .api_client.api_client import ApiClient
 
-
+DEFAULT_RS232_BAUDRATE = 460800
 class SDK:
     def __init__(self, log_level="WARNING", default_string_response_conversion="double", default_bytearray_response_conversion="bytes"):
         log.set_level(log_level)
@@ -13,8 +13,8 @@ class SDK:
     def connect_through_TCP(self, host, port):
         self._client.connect_through_TCP(host, int(port))
 
-    def connect_through_RS232(self):
-        self._client.connect_through_RS232()
+    def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE):
+        self._client.connect_through_RS232(baudrate)
 
     def disconnect(self):
         self._client.disconnect()

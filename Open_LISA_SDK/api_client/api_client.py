@@ -23,8 +23,8 @@ class ApiClient:
       log.error(e)
       raise CouldNotConnectToServerException("could not connect with server at {} through TCP".format(server_address))
 
-  def connect_through_RS232(self):
-    self._client_protocol = ClientProtocol(MessageProtocolRS232())
+  def connect_through_RS232(self, baudrate):
+    self._client_protocol = ClientProtocol(MessageProtocolRS232(baudrate=baudrate))
 
   def disconnect(self):
     if (self._socket_connection):
