@@ -11,6 +11,8 @@ class ApiClient:
   def __init__(self, default_string_response_conversion, default_bytearray_response_conversion):
     self._default_string_response_conversion = default_string_response_conversion
     self._default_bytearray_response_conversion = default_bytearray_response_conversion
+    self._socket_connection = None
+    self._rs232_connection = None
 
   def connect_through_TCP(self, host, port):
     try:
@@ -57,11 +59,12 @@ class ApiClient:
     if not connection:
       raise CouldNotConnectToServerException("could not detect Open LISA server listening through RS232")
 
+    self._rs232_connection = connection
     self._client_protocol = ClientProtocol(MessageProtocolRS232(rs232_connection=connection))
 
   def disconnect(self):
     self._client_protocol.disconnect()
-    if (self._socket_connection):
+    if self._socket_connection:
       try:
         self._socket_connection.shutdown(socket.SHUT_RDWR)
       except (socket.error, OSError, ValueError):
