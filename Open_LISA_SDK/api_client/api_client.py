@@ -47,10 +47,12 @@ class ApiClient:
           log.debug('Detect Open LISA server at {}'.format(endpoint))
           break
         else:
+          connection = None
           log.debug("no answer detected from {}".format(endpoint))
       except serial.SerialException as ex:
         log.info('serial exception {}'.format(ex))
         log.debug("could not connect to {}".format(endpoint))
+        connection = None
 
     if not connection:
       raise CouldNotConnectToServerException("could not detect Open LISA server listening through RS232")
