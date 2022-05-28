@@ -3,7 +3,7 @@ from .domain.exceptions.instrument_not_found import InstrumentNotFoundException
 from .logging import log
 from .api_client.api_client import ApiClient
 
-DEFAULT_RS232_BAUDRATE = 460800
+DEFAULT_RS232_BAUDRATE = 921600
 class SDK:
     def __init__(self, log_level="WARNING", default_string_response_conversion="double", default_bytearray_response_conversion="bytes"):
         log.set_level(log_level)
