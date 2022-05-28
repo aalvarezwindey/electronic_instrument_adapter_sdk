@@ -6,42 +6,10 @@ from ...domain.exceptions.could_not_connect_to_server import CouldNotConnectToSe
 
 # TODO: Duplicado en server y SDK, ver de usar uno en comun
 class MessageProtocolRS232(MessageProtocol):
-    # Constructor with RS232 connection for server side
     def __init__(self, rs232_connection):
         self._connection = rs232_connection
         if not self._connection.isOpen():
             self._connection.open()
-
-    # Constructor with discover for client side
-    def __init__(self, baudrate):
-        MAX_COM_TO_TRY = 10
-        TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
-        RS232_HANDSHAKE_CLIENT_REQUEST = 'OPEN'
-        RS232_HANDSHAKE_SERVER_RESPONSE = 'LISA'
-
-        for i in range(1, MAX_COM_TO_TRY):
-            try:
-                endpoint = "COM{}".format(i)
-                connection = serial.Serial(port=endpoint, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
-                MAX_UNSIGNED_INT = 4_294_967_295
-                connection.set_buffer_size(rx_size = MAX_UNSIGNED_INT, tx_size = MAX_UNSIGNED_INT)
-                if not connection.isOpen():
-                    connection.open()
-
-                # custom handshake
-                connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
-                response = connection.read(len(RS232_HANDSHAKE_SERVER_RESPONSE))
-                if len(response) > 0 and str(response.decode()) == RS232_HANDSHAKE_SERVER_RESPONSE:
-                    log.debug('Detect Open LISA server at {}'.format(endpoint))
-                    self._connection = connection
-                    return
-                else:
-                    log.debug("no answer detected from {}".format(endpoint))
-            except serial.SerialException as ex:
-                log.info('serial exception {}'.format(ex))
-                log.debug("could not connect to {}".format(endpoint))
-
-        raise CouldNotConnectToServerException("could not detect Open LISA server listening through RS232")
 
     def __del__(self):
         self._connection.close()
