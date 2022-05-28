@@ -37,7 +37,8 @@ class MessageProtocolRS232(MessageProtocol):
                     return
                 else:
                     log.debug("no answer detected from {}".format(endpoint))
-            except serial.SerialException:
+            except serial.SerialException as ex:
+                log.info('serial exception {}'.format(ex))
                 log.debug("could not connect to {}".format(endpoint))
 
         raise CouldNotConnectToServerException("could not detect Open LISA server listening through RS232")
