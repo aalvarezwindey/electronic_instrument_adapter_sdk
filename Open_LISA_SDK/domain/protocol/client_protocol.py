@@ -23,7 +23,7 @@ def entering(func):
 
 def exiting(func, elapsed):
 	""" Post function logging """
-	log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f}]".format(func.__name__, elapsed))
+	log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={.8f} seconds]".format(func.__name__, elapsed))
 
 SUCCESS_RESPONSE = "OK"
 ERROR_RESPONSE = "ERROR"
