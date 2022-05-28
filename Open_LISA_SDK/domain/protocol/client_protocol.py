@@ -29,7 +29,7 @@ class ClientProtocol:
   def disconnect(self):
     log.debug("[LATENCY_MEASURE][INIT][{}]".format('disconnect'))
     ts = time()
-    self._message_protocol.send_msg(COMMAND_GET_INSTRUMENTS)
+    self._message_protocol.send_msg(COMMAND_DISCONNECT)
     te = time()
     log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('disconnect', te-ts))
     return
