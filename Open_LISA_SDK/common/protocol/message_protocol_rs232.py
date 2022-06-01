@@ -10,7 +10,7 @@ class MessageProtocolRS232(MessageProtocol):
         if not self._connection.isOpen():
             self._connection.open()
 
-    def __del__(self):
+    def disconnect(self):
         self._connection.close()
 
     def send_msg(self, msg, encode=True):
