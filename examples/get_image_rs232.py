@@ -1,7 +1,7 @@
 import Open_LISA_SDK
 
 def main():
-  sdk = Open_LISA_SDK.SDK()
+  sdk = Open_LISA_SDK.SDK(log_level="DEBUG")
   sdk.connect_through_RS232()
 
   instruments = sdk.list_instruments()
