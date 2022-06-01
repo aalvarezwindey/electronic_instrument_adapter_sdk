@@ -64,12 +64,6 @@ class ApiClient:
 
   def disconnect(self):
     self._client_protocol.disconnect()
-    if self._socket_connection:
-      try:
-        self._socket_connection.shutdown(socket.SHUT_RDWR)
-      except (socket.error, OSError, ValueError):
-        pass
-      self._socket_connection.close()
 
 
   def get_instruments(self):
