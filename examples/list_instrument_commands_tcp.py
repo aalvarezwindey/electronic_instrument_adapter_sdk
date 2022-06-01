@@ -14,3 +14,5 @@ if len(instruments) != 0:
     print(c)
 else:
   print("no instruments available")
+
+sdk.disconnect()

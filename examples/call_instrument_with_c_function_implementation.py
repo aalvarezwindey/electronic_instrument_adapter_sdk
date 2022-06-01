@@ -16,5 +16,7 @@ def main():
   else:
     print("Cammera with ID 'CAM_ID' not found")
 
+  sdk.disconnect()
+
 if __name__ == "__main__":
     main()

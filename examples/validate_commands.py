@@ -15,3 +15,5 @@ if len(instruments) != 0:
   instrument.validate_command("set_trigger_level 3.4")
 else:
   print("no instruments available")
+
+sdk.disconnect()
