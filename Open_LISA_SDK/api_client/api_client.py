@@ -39,7 +39,7 @@ class ApiClient:
         connection = serial.Serial(port=endpoint, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
         MAX_UNSIGNED_INT = 4_294_967_295
         connection.set_buffer_size(rx_size = MAX_UNSIGNED_INT, tx_size = MAX_UNSIGNED_INT)
-        if not connection.isOpen():
+        if not connection.is_open:
           connection.open()
 
         # custom handshake
