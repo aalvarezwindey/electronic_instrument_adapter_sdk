@@ -1,7 +1,7 @@
 
 from setuptools import setup, find_packages
 
-VERSION_PLACEHOLDER = '0.4.3'
+VERSION_PLACEHOLDER = '0.4.4'
 
 setup(
   name = 'Open_LISA_SDK',         # How you named your package folder (MyLib)
