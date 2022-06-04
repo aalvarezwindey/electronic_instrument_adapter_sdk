@@ -1,5 +1,6 @@
 import socket
 import serial
+import traceback
 from ..domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 from ..domain.instruments.instrument import Instrument
 from ..domain.protocol.client_protocol import ClientProtocol
@@ -35,14 +36,17 @@ class ApiClient:
     connection = None
     for i in range(1, MAX_COM_TO_TRY):
       try:
+        log.debug('[connect_through_RS232] trying to connect to COM{}'.format(i))
         endpoint = "COM{}".format(i)
         connection = serial.Serial(port=endpoint, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
-        MAX_UNSIGNED_INT = 4_294_967_295
-        connection.set_buffer_size(rx_size = MAX_UNSIGNED_INT, tx_size = MAX_UNSIGNED_INT)
+        log.debug('[connect_through_RS232] connection created {}'.format(connection))
         if not connection.is_open:
           connection.open()
 
         # custom handshake
+        MAX_UNSIGNED_INT = 4_294_967_295
+        log.debug('[connect_through_RS232] setting buffer size to {}B'.format(4_294_967_295))
+        connection.set_buffer_size(rx_size = MAX_UNSIGNED_INT, tx_size = MAX_UNSIGNED_INT)
         connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
         response = connection.read(len(RS232_HANDSHAKE_SERVER_RESPONSE))
         if len(response) > 0 and str(response.decode()) == RS232_HANDSHAKE_SERVER_RESPONSE:
@@ -53,6 +57,7 @@ class ApiClient:
           log.debug("no answer detected from {}".format(endpoint))
       except serial.SerialException as ex:
         log.info('serial exception {}'.format(ex))
+        log.debug('exception stacktrace {}'.format(traceback.format_exc()))
         log.debug("could not connect to {}".format(endpoint))
         connection = None
 

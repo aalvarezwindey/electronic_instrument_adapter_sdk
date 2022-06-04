@@ -1,7 +1,7 @@
 import struct
+import time
 from .message_protocol import MessageProtocol
 from ...logging import log
-from ...domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 
 # TODO: Duplicado en server y SDK, ver de usar uno en comun
 class MessageProtocolRS232(MessageProtocol):
@@ -11,6 +11,16 @@ class MessageProtocolRS232(MessageProtocol):
             self._connection.open()
 
     def disconnect(self):
+        while self._connection.in_waiting:
+            log.debug('[MessageProtocolRS232][disconnect] waiting input buffer to be empty')
+            time.sleep(0.5)
+        self._connection.reset_input_buffer()
+
+        while self._connection.out_waiting:
+            log.debug('[MessageProtocolRS232][disconnect] waiting output buffer to be empty')
+            time.sleep(0.5)
+        self._connection.reset_output_buffer()
+
         self._connection.close()
 
     def send_msg(self, msg, encode=True):
