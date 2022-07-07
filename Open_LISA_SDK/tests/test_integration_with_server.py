@@ -9,7 +9,10 @@ from .. import SDK
 
 LOCALHOST = "127.0.0.1"
 SERVER_PORT = 8080
-TEST_TEKTRONIX_OSC_INSTRUMENT_ID = "USB0::0x0699::0x0363::C107676::INSTR"
+TEST_TEKTRONIX_OSC_PHYSICAL_ADDRESS = "USB0::0x0699::0x0363::C107676::INSTR"
+TEST_TEKTRONIX_OSC_INSTRUMENT_ID = 1
+MOCK_CAMERA_ID = 2
+UNEXISTING_INSTRUMENT_ID = 999
 SOME_VALID_TEKTRONIX_OSC_COMMAND = "clear_status"
 SOME_VALID_TEKTRONIX_OSC_COMMAND_INVOCATION = "set_trigger_level 3.4"
 MOCK_IMAGE_PATH = "Open_LISA_SDK/tests/mock_img.jpg"
@@ -46,7 +49,7 @@ def test_get_specific_instrument_as_python_dict():
     instrument = sdk.get_instrument(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="PYTHON")
     assert isinstance(instrument, dict)
-    assert instrument["physical_address"] == TEST_TEKTRONIX_OSC_INSTRUMENT_ID
+    assert instrument["physical_address"] == TEST_TEKTRONIX_OSC_PHYSICAL_ADDRESS
 
     sdk.disconnect()
 
@@ -57,7 +60,7 @@ def test_get_specific_instrument_as_json_str():
     instrument_json = sdk.get_instrument(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="JSON")
     assert isinstance(instrument_json, str)
-    assert TEST_TEKTRONIX_OSC_INSTRUMENT_ID in instrument_json
+    assert TEST_TEKTRONIX_OSC_PHYSICAL_ADDRESS in instrument_json
 
     sdk.disconnect()
 
@@ -67,7 +70,7 @@ def test_get_specific_instrument_that_does_not_exist_raises_exception():
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
 
     with pytest.raises(OpenLISAException):
-        sdk.get_instrument(instrument_id="unexisting_instrument",
+        sdk.get_instrument(instrument_id=UNEXISTING_INSTRUMENT_ID,
                            response_format="PYTHON")
     sdk.disconnect()
 
@@ -122,7 +125,7 @@ def test_is_valid_command_invocation_with_invalid_invocations_returns_false():
 def test_send_command_to_get_image_from_mock_camera():
     sdk = SDK(log_level="ERROR")
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
-    result = sdk.send_command(instrument_id="CAM_ID",
+    result = sdk.send_command(instrument_id=MOCK_CAMERA_ID,
                               command_invocation="get_image")
     with open(MOCK_IMAGE_PATH, "rb") as f:
         image_bytes = f.read()

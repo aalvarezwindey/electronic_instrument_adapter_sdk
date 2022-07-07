@@ -52,9 +52,11 @@ class ClientProtocol:
         return result
 
     def get_instrument(self, id):
+        id = str(id)
         return json.loads(self.get_instrument_as_json_string(id))
 
     def get_instrument_as_json_string(self, id):
+        id = str(id)
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_instrument'))
         ts = time()
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT)
@@ -73,6 +75,7 @@ class ClientProtocol:
         return json.loads(self.get_instrument_commands_as_json_string(id))
 
     def get_instrument_commands_as_json_string(self, id):
+        id = str(id)
         log.debug("[LATENCY_MEASURE][INIT][{}]".format(
             'get_instrument_commands'))
         ts = time()
@@ -89,6 +92,7 @@ class ClientProtocol:
             raise OpenLISAException(result_msg)
 
     def validate_command(self, id, command):
+        id = str(id)
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('validate_command'))
         ts = time()
         self._message_protocol.send_msg(COMMAND_VALIDATE_COMMAND)
@@ -108,6 +112,7 @@ class ClientProtocol:
             'validate_command', te-ts))
 
     def send_command(self, id, command):
+        id = str(id)
         json_str = self.send_command_and_result_as_json_string(id, command)
         command_execution_result_dict = json.loads(json_str)
         # BYTES are sent as a base64 string
@@ -117,6 +122,7 @@ class ClientProtocol:
         return command_execution_result_dict
 
     def send_command_and_result_as_json_string(self, id, command):
+        id = str(id)
         log.debug("[LATENCY_MEASURE][INIT][{}][command={}]".format(
             'send_command', command))
         ts = time()
