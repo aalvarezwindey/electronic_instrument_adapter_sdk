@@ -1,5 +1,6 @@
 # NOTE: this tests expect the Open LISA Server being run in TCP mode
 # at port 8080 and with ENV=test
+# Example: python main.py  --env test --mode TCP --tcp_port 8080 --log-level INFO
 import json
 
 import pytest
