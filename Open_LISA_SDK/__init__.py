@@ -110,6 +110,24 @@ class SDK:
     def disconnect(self):
         self._client_protocol.disconnect()
 
+    def __reset_databases(self):
+        return self._client_protocol.reset_databases()
+
+    def create_instrument(self, new_instrument, response_format=None):
+        created_instrument_as_json_string = self._client_protocol.create_instrument_as_json_string(
+            new_instrument)
+        return self.__format_response(created_instrument_as_json_string, response_format)
+
+    def update_instrument(self, instrument_id, updated_instrument, response_format=None):
+        updated_instrument_as_json_string = self._client_protocol.update_instrument_as_json_string(
+            instrument_id, updated_instrument)
+        return self.__format_response(updated_instrument_as_json_string, response_format)
+
+    def delete_instrument(self, instrument_id, response_format=None):
+        deleted_instrument = self._client_protocol.delete_instrument_as_json_string(
+            instrument_id)
+        return self.__format_response(deleted_instrument, response_format)
+
     def get_instruments(self, response_format=None):
         """
         Returns the list of instruments dictionaries

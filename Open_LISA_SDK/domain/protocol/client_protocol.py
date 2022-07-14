@@ -1,6 +1,8 @@
 import base64
 import json
 from time import time
+
+from ...common.protocol.message_protocol import MessageProtocol
 from ..exceptions.sdk_exception import OpenLISAException
 from ..exceptions.invalid_command import InvalidCommandException
 from ...logging import log
@@ -11,13 +13,18 @@ ERROR_RESPONSE = "ERROR"
 COMMAND_DISCONNECT = "DISCONNECT"
 COMMAND_GET_INSTRUMENTS = "GET_INSTRUMENTS"
 COMMAND_GET_INSTRUMENT = "GET_INSTRUMENT"
+COMMAND_CREATE_INSTRUMENT = "CREATE_INSTRUMENT"
+COMMAND_UPDATE_INSTRUMENT = "UPDATE_INSTRUMENT"
+COMMAND_DELETE_INSTRUMENT = "DELETE_INSTRUMENT"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
 COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
+# Only available when server is running in test mode
+COMMAND_RESET_DATABASES = "RESET_DATABASES"
 
 
 class ClientProtocol:
-    def __init__(self, message_protocol):
+    def __init__(self, message_protocol: MessageProtocol):
         self._message_protocol = message_protocol
 
     def __is_valid_response(self, response):
@@ -37,6 +44,50 @@ class ClientProtocol:
             'disconnect', te-ts))
         self._message_protocol.disconnect()
         return
+
+    def create_instrument(self, new_instrument):
+        return json.loads(self.get_instrument_as_json_string(new_instrument))
+
+    def create_instrument_as_json_string(self, new_instrument):
+        self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT)
+        self._message_protocol.send_msg(json.dumps(new_instrument))
+        response_type = self._message_protocol.receive_msg()
+        result_msg = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response_type):
+            return result_msg
+        else:
+            raise OpenLISAException(result_msg)
+
+    def update_instrument(self, id, updated_instrument):
+        id = str(id)
+        return json.loads(self.update_instrument_as_json_string(id, updated_instrument))
+
+    def update_instrument_as_json_string(self, id, updated_instrument):
+        id = str(id)
+        self._message_protocol.send_msg(COMMAND_UPDATE_INSTRUMENT)
+        self._message_protocol.send_msg(id)
+        self._message_protocol.send_msg(json.dumps(updated_instrument))
+        response_type = self._message_protocol.receive_msg()
+        result_msg = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response_type):
+            return result_msg
+        else:
+            raise OpenLISAException(result_msg)
+
+    def delete_instrument(self, id):
+        id = str(id)
+        return json.loads(self.delete_instrument_as_json_string(id))
+
+    def delete_instrument_as_json_string(self, id):
+        id = str(id)
+        self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT)
+        self._message_protocol.send_msg(id)
+        response_type = self._message_protocol.receive_msg()
+        result_msg = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response_type):
+            return result_msg
+        else:
+            raise OpenLISAException(result_msg)
 
     def get_instruments(self):
         return json.loads(self.get_instruments_as_json_string())
@@ -144,3 +195,7 @@ class ClientProtocol:
                 'send_command', command, te-ts))
             raise InvalidCommandException(
                 "command '{}' for instrument {} is not valid: {}".format(command, id, err))
+
+    def reset_databases(self):
+        self._message_protocol.send_msg(COMMAND_RESET_DATABASES)
+        return self._message_protocol.receive_msg()

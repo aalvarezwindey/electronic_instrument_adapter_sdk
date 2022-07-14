@@ -18,6 +18,18 @@ SOME_VALID_TEKTRONIX_OSC_COMMAND = "clear_status"
 SOME_VALID_TEKTRONIX_OSC_COMMAND_INVOCATION = "set_trigger_level 3.4"
 MOCK_IMAGE_PATH = "Open_LISA_SDK/tests/mock_img.jpg"
 
+VALID_INSTRUMENT_CREATION_DICT = {
+    "brand": "some brand",
+    "model": "some model",
+    "physical_address": None,
+    "type": "CLIB",
+    "description": "some description"
+}
+VALID_UPDATED_BRAND = "some new brand"
+VALID_INSTRUMENT_UPDATE_DICT = {
+    "brand": VALID_UPDATED_BRAND
+}
+
 
 def test_get_instruments_as_python_list_of_dicts():
     sdk = SDK(log_level="ERROR")
@@ -131,3 +143,25 @@ def test_send_command_to_get_image_from_mock_camera():
     with open(MOCK_IMAGE_PATH, "rb") as f:
         image_bytes = f.read()
         assert image_bytes == result["value"]
+
+
+def test_instrument_CRUDs():
+    sdk = SDK(log_level="ERROR")
+    sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
+    new_instrument = sdk.create_instrument(
+        new_instrument=VALID_INSTRUMENT_CREATION_DICT, response_format="PYTHON")
+    assert new_instrument["brand"] == VALID_INSTRUMENT_CREATION_DICT["brand"]
+
+    updated_instrument = sdk.update_instrument(
+        instrument_id=new_instrument["id"], updated_instrument=VALID_INSTRUMENT_UPDATE_DICT, response_format="PYTHON")
+    assert new_instrument["id"] == updated_instrument["id"]
+    assert updated_instrument["brand"] == VALID_INSTRUMENT_UPDATE_DICT["brand"]
+
+    deleted_instrument = sdk.delete_instrument(
+        instrument_id=new_instrument["id"], response_format="PYTHON")
+    assert new_instrument["id"] == deleted_instrument["id"]
+
+    with pytest.raises(OpenLISAException):
+        sdk.get_instrument(instrument_id=deleted_instrument["id"])
+
+    sdk.disconnect()
