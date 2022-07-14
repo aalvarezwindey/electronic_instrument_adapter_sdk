@@ -2,6 +2,7 @@ import json
 import socket
 import traceback
 import serial
+import serial.tools.list_ports
 
 from .domain.exceptions.invalid_command import InvalidCommandException
 
@@ -56,20 +57,21 @@ class SDK:
 
     def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE, port=None):
         # Discover server RS232
-        MAX_COM_TO_TRY = 10
         TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
         RS232_HANDSHAKE_CLIENT_REQUEST = 'OPEN'
         RS232_HANDSHAKE_SERVER_RESPONSE = 'LISA'
 
         connection = None
-        ports_to_try = range(1, MAX_COM_TO_TRY) if not port else [port]
-        for i in ports_to_try:
+        detected_ports_info_instances = serial.tools.list_ports.comports()
+        detected_port_devices = [
+            pinfo.device for pinfo in detected_ports_info_instances]
+        ports_to_try = detected_port_devices if not port else [port]
+        for port in ports_to_try:
             try:
                 log.debug(
-                    '[connect_through_RS232] trying to connect to COM{}'.format(i))
-                endpoint = "COM{}".format(i)
+                    '[connect_through_RS232] trying to connect to {}'.format(port))
                 connection = serial.Serial(
-                    port=endpoint, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
+                    port=port, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
                 log.debug(
                     '[connect_through_RS232] connection created {}'.format(connection))
                 if not connection.is_open:
@@ -86,16 +88,16 @@ class SDK:
                     len(RS232_HANDSHAKE_SERVER_RESPONSE))
                 if len(response) > 0 and str(response.decode()) == RS232_HANDSHAKE_SERVER_RESPONSE:
                     log.debug('Detect Open LISA server at {} with baudrate {}'.format(
-                        endpoint, baudrate))
+                        port, baudrate))
                     break
                 else:
                     connection = None
-                    log.debug("no answer detected from {}".format(endpoint))
+                    log.debug("no answer detected from {}".format(port))
             except serial.SerialException as ex:
                 log.info('serial exception {}'.format(ex))
                 log.debug('exception stacktrace {}'.format(
                     traceback.format_exc()))
-                log.debug("could not connect to {}".format(endpoint))
+                log.debug("could not connect to {}".format(port))
                 connection = None
 
         if not connection:
