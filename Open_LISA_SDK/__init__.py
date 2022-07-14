@@ -54,7 +54,7 @@ class SDK:
             raise CouldNotConnectToServerException(
                 "could not connect with server at {} through TCP".format(server_address))
 
-    def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE):
+    def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE, port=None):
         # Discover server RS232
         MAX_COM_TO_TRY = 10
         TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
@@ -62,7 +62,8 @@ class SDK:
         RS232_HANDSHAKE_SERVER_RESPONSE = 'LISA'
 
         connection = None
-        for i in range(1, MAX_COM_TO_TRY):
+        ports_to_try = range(1, MAX_COM_TO_TRY) if not port else [port]
+        for i in ports_to_try:
             try:
                 log.debug(
                     '[connect_through_RS232] trying to connect to COM{}'.format(i))
