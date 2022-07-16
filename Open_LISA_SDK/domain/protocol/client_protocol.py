@@ -229,18 +229,30 @@ class ClientProtocol:
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_file', te - ts))
 
-    def execute_bash_command(self, command):
+    def execute_bash_command(self, command, capture_stdout, capture_stderr):
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('execute_bash_command'))
         ts = time()
+        stdout = None
+        stderr = None
         self._message_protocol.send_msg(COMMAND_EXECUTE_BASH)
         self._message_protocol.send_msg(command)
+        self._message_protocol.send_msg(str(capture_stdout))
+        self._message_protocol.send_msg(str(capture_stderr))
         status_code = str(self._message_protocol.receive_msg())
         log.info("Status code after remote bash command execution: {}".format(status_code))
+
+        if capture_stdout:
+            stdout = str(self._message_protocol.receive_msg())
+            log.debug("Remote execution command stdout: {}".format(stdout))
+
+        if capture_stderr:
+            stderr = str(self._message_protocol.receive_msg())
+            log.debug("Remote execution command stderr: {}".format(stderr))
 
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('execute_bash_command', te - ts))
 
-        return status_code
+        return status_code, stdout, stderr
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)

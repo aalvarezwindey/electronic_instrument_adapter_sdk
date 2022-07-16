@@ -199,8 +199,8 @@ class SDK:
     def get_file(self, remote_file_name, file_target_name):
         self._client_protocol.get_file(remote_file_name, file_target_name)
 
-    def execute_bash_command(self, command):
-        return self._client_protocol.execute_bash_command(command)
+    def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
+        return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)
 
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
