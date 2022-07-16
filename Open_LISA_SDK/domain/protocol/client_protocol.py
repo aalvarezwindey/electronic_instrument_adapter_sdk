@@ -19,6 +19,9 @@ COMMAND_DELETE_INSTRUMENT = "DELETE_INSTRUMENT"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
 COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
+COMMAND_GET_FILE = "GET_FILE"
+COMMAND_SEND_FILE = "SEND_FILE"
+COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
 
@@ -195,6 +198,63 @@ class ClientProtocol:
                 'send_command', command, te-ts))
             raise InvalidCommandException(
                 "command '{}' for instrument {} is not valid: {}".format(command, id, err))
+
+    def send_file(self, file_bytes, file_target_name):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('send_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_SEND_FILE)
+        self._message_protocol.send_msg(file_target_name)
+        self._message_protocol.send_msg(file_bytes, encode=False)
+
+        response = self._message_protocol.receive_msg()
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
+
+        return response
+
+    def get_file(self, remote_file_name):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_GET_FILE)
+        self._message_protocol.send_msg(remote_file_name)
+        response_type = str(self._message_protocol.receive_msg())
+
+        if not self.__is_valid_response(response_type):
+            log.error("Error requesting remote file: {}".format(remote_file_name))
+            error_message = self._message_protocol.receive_msg()
+            raise OpenLISAException(error_message)
+
+        file_bytes = self._message_protocol.receive_msg(decode=False)
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_file', te - ts))
+
+        return file_bytes
+
+    def execute_bash_command(self, command, capture_stdout, capture_stderr):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('execute_bash_command'))
+        ts = time()
+        stdout = None
+        stderr = None
+        self._message_protocol.send_msg(COMMAND_EXECUTE_BASH)
+        self._message_protocol.send_msg(command)
+        self._message_protocol.send_msg(str(capture_stdout))
+        self._message_protocol.send_msg(str(capture_stderr))
+        status_code = str(self._message_protocol.receive_msg())
+        log.info("Status code after remote bash command execution: {}".format(status_code))
+
+        if capture_stdout:
+            stdout = str(self._message_protocol.receive_msg())
+            log.debug("Remote execution command stdout: {}".format(stdout))
+
+        if capture_stderr:
+            stderr = str(self._message_protocol.receive_msg())
+            log.debug("Remote execution command stderr: {}".format(stderr))
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('execute_bash_command', te - ts))
+
+        return status_code, stdout, stderr
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)

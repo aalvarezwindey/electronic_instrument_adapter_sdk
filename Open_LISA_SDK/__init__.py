@@ -14,7 +14,6 @@ from .domain.protocol.client_protocol import ClientProtocol
 from .domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 from .logging import log
 
-
 DEFAULT_RS232_BAUDRATE = 921600
 
 SDK_RESPONSE_FORMAT_JSON = "JSON"
@@ -159,7 +158,8 @@ class SDK:
             return False
 
     def send_command(self, instrument_id, command_invocation, response_format=None, convert_result_to=None):
-        if response_format == SDK_RESPONSE_FORMAT_JSON or (response_format == None and self._default_response_format == SDK_RESPONSE_FORMAT_JSON):
+        if response_format == SDK_RESPONSE_FORMAT_JSON or (
+                response_format == None and self._default_response_format == SDK_RESPONSE_FORMAT_JSON):
             # If response format is json convert_result_to is ignored
             return self._client_protocol.send_command_and_result_as_json_string(instrument_id, command_invocation)
 
@@ -190,6 +190,19 @@ class SDK:
             raise InvalidCommandException(error)
 
         return command_execution_result
+
+    def send_file(self, file_path, file_target_name):
+        with open(file_path, "rb") as file:
+            data = file.read()
+            return self._client_protocol.send_file(data, file_target_name)
+
+    def get_file(self, remote_file_name, file_target_name):
+        file_bytes = self._client_protocol.get_file(remote_file_name, file_target_name)
+        with open(file_target_name, "wb") as file:
+            file.write(file_bytes)
+
+    def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
+        return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)
 
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
