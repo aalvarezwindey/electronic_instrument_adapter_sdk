@@ -217,10 +217,11 @@ class ClientProtocol:
         ts = time()
         self._message_protocol.send_msg(COMMAND_GET_FILE)
         self._message_protocol.send_msg(remote_file_name)
-        file_found = str(self._message_protocol.receive_msg())
-        if ERROR_RESPONSE == file_found:
-            log.error("Requested file does not exist: {}".format(remote_file_name))
-            raise FileNotFoundError
+        response_type = str(self._message_protocol.receive_msg())
+
+        if not self.__is_valid_response(response_type):
+            log.error("Error requesting remote file: {}".format(remote_file_name))
+            raise OpenLISAException(response_type)
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
 
