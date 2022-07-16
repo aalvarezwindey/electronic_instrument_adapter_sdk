@@ -194,7 +194,7 @@ class SDK:
     def send_file(self, file_path, file_target_name):
         with open(file_path, "rb") as file:
             data = file.read()
-            self._client_protocol.send_file(data, file_target_name)
+            return self._client_protocol.send_file(data, file_target_name)
 
     def get_file(self, remote_file_name, file_target_name):
         self._client_protocol.get_file(remote_file_name, file_target_name)

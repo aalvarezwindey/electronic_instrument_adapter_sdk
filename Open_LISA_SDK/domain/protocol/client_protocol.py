@@ -209,7 +209,8 @@ class ClientProtocol:
         response = self._message_protocol.receive_msg()
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
-        log.info("RESPONSE FROM SERVER: {}".format(str(response)))
+
+        return response
 
     def get_file(self, remote_file_name, file_target_name):
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_file'))
