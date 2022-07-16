@@ -191,6 +191,11 @@ class SDK:
 
         return command_execution_result
 
+    def send_file(self, file_path, file_target_name):
+        with open(file_path, "rb") as file:
+            data = file.read()
+            self._client_protocol.send_file(data, file_target_name)
+
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
         assert response_format in SDK_VALID_RESPONSE_FORMATS

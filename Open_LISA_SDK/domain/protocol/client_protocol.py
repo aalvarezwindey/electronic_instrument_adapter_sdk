@@ -21,6 +21,7 @@ COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
+COMMAND_SEND_FILE = "SEND_FILE"
 
 
 class ClientProtocol:
@@ -195,6 +196,18 @@ class ClientProtocol:
                 'send_command', command, te-ts))
             raise InvalidCommandException(
                 "command '{}' for instrument {} is not valid: {}".format(command, id, err))
+
+    def send_file(self, file_bytes, file_target_name):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('send_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_SEND_FILE)
+        self._message_protocol.send_msg(file_target_name)
+        self._message_protocol.send_msg(file_bytes, encode=False)
+
+        response = self._message_protocol.receive_msg()
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
+        log.info("RESPONSE FROM SERVER: {}".format(str(response)))
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)
