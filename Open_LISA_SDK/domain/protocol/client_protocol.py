@@ -219,7 +219,7 @@ class ClientProtocol:
         file_found = str(self._message_protocol.receive_msg())
         if ERROR_RESPONSE == file_found:
             log.error("Requested file does not exist: {}".format(remote_file_name))
-            return ERROR_RESPONSE
+            raise FileNotFoundError
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
 
@@ -239,6 +239,8 @@ class ClientProtocol:
 
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('execute_bash_command', te - ts))
+
+        return status_code
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)
