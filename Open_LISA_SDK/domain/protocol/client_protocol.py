@@ -212,7 +212,7 @@ class ClientProtocol:
 
         return response
 
-    def get_file(self, remote_file_name, file_target_name):
+    def get_file(self, remote_file_name):
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_file'))
         ts = time()
         self._message_protocol.send_msg(COMMAND_GET_FILE)
@@ -221,7 +221,8 @@ class ClientProtocol:
 
         if not self.__is_valid_response(response_type):
             log.error("Error requesting remote file: {}".format(remote_file_name))
-            raise OpenLISAException(response_type)
+            error_message = self._message_protocol.receive_msg()
+            raise OpenLISAException(error_message)
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
 
