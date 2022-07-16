@@ -196,6 +196,12 @@ class SDK:
             data = file.read()
             self._client_protocol.send_file(data, file_target_name)
 
+    def get_file(self, remote_file_name, file_target_name):
+        self._client_protocol.get_file(remote_file_name, file_target_name)
+
+    def execute_bash_command(self, command):
+        self._client_protocol.execute_bash_command(command)
+
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
         assert response_format in SDK_VALID_RESPONSE_FORMATS

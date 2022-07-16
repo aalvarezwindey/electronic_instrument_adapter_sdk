@@ -19,9 +19,11 @@ COMMAND_DELETE_INSTRUMENT = "DELETE_INSTRUMENT"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
 COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
+COMMAND_GET_FILE = "GET_FILE"
+COMMAND_SEND_FILE = "SEND_FILE"
+COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
-COMMAND_SEND_FILE = "SEND_FILE"
 
 
 class ClientProtocol:
@@ -208,6 +210,35 @@ class ClientProtocol:
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
         log.info("RESPONSE FROM SERVER: {}".format(str(response)))
+
+    def get_file(self, remote_file_name, file_target_name):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_GET_FILE)
+        self._message_protocol.send_msg(remote_file_name)
+        file_found = str(self._message_protocol.receive_msg())
+        if ERROR_RESPONSE == file_found:
+            log.error("Requested file does not exist: {}".format(remote_file_name))
+            return ERROR_RESPONSE
+
+        file_bytes = self._message_protocol.receive_msg(decode=False)
+
+        with open(file_target_name, "wb") as file:
+            file.write(file_bytes)
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_file', te - ts))
+
+    def execute_bash_command(self, command):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('execute_bash_command'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_EXECUTE_BASH)
+        self._message_protocol.send_msg(command)
+        status_code = str(self._message_protocol.receive_msg())
+        log.info("Status code after remote bash command execution: {}".format(status_code))
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('execute_bash_command', te - ts))
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)
