@@ -225,11 +225,10 @@ class ClientProtocol:
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
 
-        with open(file_target_name, "wb") as file:
-            file.write(file_bytes)
-
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('get_file', te - ts))
+
+        return file_bytes
 
     def execute_bash_command(self, command, capture_stdout, capture_stderr):
         log.debug("[LATENCY_MEASURE][INIT][{}]".format('execute_bash_command'))
