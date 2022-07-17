@@ -8,6 +8,7 @@ from .domain.exceptions.invalid_command import InvalidCommandException
 
 from .common.protocol.message_protocol_rs232 import MessageProtocolRS232
 from .common.protocol.message_protocol_tcp import MessageProtocolTCP
+from .domain.exceptions.sdk_exception import OpenLISAException
 
 from .domain.protocol.client_protocol import ClientProtocol
 
@@ -197,9 +198,12 @@ class SDK:
             return self._client_protocol.send_file(data, file_target_name)
 
     def get_file(self, remote_file_name, file_target_name):
-        file_bytes = self._client_protocol.get_file(remote_file_name)
-        with open(file_target_name, "wb") as file:
-            file.write(file_bytes)
+        try:
+            file_bytes = self._client_protocol.get_file(remote_file_name)
+            with open(file_target_name, "wb") as file:
+                file.write(file_bytes)
+        except OpenLISAException as e:
+            log.error("Error requesting remote file '{}' : {}".format(remote_file_name, e.message))
 
     def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
         return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)
