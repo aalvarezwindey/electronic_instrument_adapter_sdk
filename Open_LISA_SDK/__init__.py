@@ -198,12 +198,9 @@ class SDK:
             return self._client_protocol.send_file(data, file_target_name)
 
     def get_file(self, remote_file_name, file_target_name):
-        try:
-            file_bytes = self._client_protocol.get_file(remote_file_name)
-            with open(file_target_name, "wb") as file:
-                file.write(file_bytes)
-        except OpenLISAException as e:
-            log.error("Error requesting remote file '{}' : {}".format(remote_file_name, e.message))
+        file_bytes = self._client_protocol.get_file(remote_file_name)
+        with open(file_target_name, "wb") as file:
+            file.write(file_bytes)
 
     def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
         return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)

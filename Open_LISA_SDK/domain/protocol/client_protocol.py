@@ -221,6 +221,7 @@ class ClientProtocol:
 
         if not self.__is_valid_response(response_type):
             error_message = self._message_protocol.receive_msg()
+            log.error("Error requesting remote file '{}' : {}".format(remote_file_name, error_message))
             raise OpenLISAException(error_message)
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
