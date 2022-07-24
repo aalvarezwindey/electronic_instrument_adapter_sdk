@@ -2,6 +2,7 @@ import base64
 import json
 from time import time
 
+from ..exceptions.invalid_path_exception import InvalidPathException
 from ...common.protocol.message_protocol import MessageProtocol
 from ..exceptions.sdk_exception import OpenLISAException
 from ..exceptions.invalid_command import InvalidCommandException
@@ -207,6 +208,13 @@ class ClientProtocol:
         self._message_protocol.send_msg(file_bytes, encode=False)
 
         response = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response):
+            err = self._message_protocol.receive_msg()
+            te = time()
+            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
+                'send_file', te-ts))
+            raise InvalidPathException(err)
+
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
 
