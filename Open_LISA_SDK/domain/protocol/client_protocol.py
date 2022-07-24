@@ -208,7 +208,7 @@ class ClientProtocol:
         self._message_protocol.send_msg(file_bytes, encode=False)
 
         response = self._message_protocol.receive_msg()
-        if self.__is_valid_response(response):
+        if not self.__is_valid_response(response):
             err = self._message_protocol.receive_msg()
             te = time()
             log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
