@@ -222,7 +222,7 @@ class ClientProtocol:
         return response
 
     def delete_file(self, file_path):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('send_file'))
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_file'))
         ts = time()
         self._message_protocol.send_msg(COMMAND_DELETE_FILE)
         self._message_protocol.send_msg(file_path)
@@ -232,11 +232,11 @@ class ClientProtocol:
             err = self._message_protocol.receive_msg()
             te = time()
             log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-                'send_file', te-ts))
+                'delete_file', te-ts))
             raise InvalidPathException(err)
 
         te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('delete_file', te - ts))
 
         return response
 
