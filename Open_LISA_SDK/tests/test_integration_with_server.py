@@ -145,6 +145,19 @@ def test_send_command_to_get_image_from_mock_camera():
         image_bytes = f.read()
         assert image_bytes == result["value"]
 
+def test_send_command_and_save_result_in_server():
+    sdk = SDK(log_level="ERROR")
+    sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
+    result = sdk.send_command(instrument_id=MOCK_CAMERA_ID,
+                              command_invocation="get_image", command_result_output_file="sandbox/output.jpg")
+    assert result == None
+    sdk.get_directory_structure()
+    sandbox_dir = sdk.get_directory_structure("sandbox", response_format="PYTHON")
+    # TODO: assert here that output.jpg exists in server
+    sdk.delete_file(file_path="sandbox/output.jpg")
+    sandbox_dir = sdk.get_directory_structure("sandbox", response_format="PYTHON")
+    # TODO: assert here that output.jpg does not exist in server
+
 
 def test_instrument_CRUDs():
     sdk = SDK(log_level="ERROR")

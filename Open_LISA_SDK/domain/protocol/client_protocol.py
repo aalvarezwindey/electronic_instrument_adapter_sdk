@@ -175,6 +175,9 @@ class ClientProtocol:
         json_str = self.send_command_and_result_as_json_string(
             id, command, command_result_output_file)
 
+        if not json_str and command_result_output_file:
+            return None
+
         command_execution_result_dict = json.loads(json_str)
         command_execution_value = command_execution_result_dict["value"]
         command_execution_type = command_execution_result_dict["type"]
@@ -201,7 +204,9 @@ class ClientProtocol:
         self._message_protocol.send_msg(json.dumps(command_execution_request))
         response_type = self._message_protocol.receive_msg()
         if self.__is_valid_response(response_type):
-            command_execution_result_json_str = self._message_protocol.receive_msg()
+            command_execution_result_json_str = None
+            if not command_result_output_file: # if result was saved in Server this message is not sent
+                command_execution_result_json_str = self._message_protocol.receive_msg()
             te = time()
             log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={} seconds]".format(
                 'send_command', command, te-ts))
