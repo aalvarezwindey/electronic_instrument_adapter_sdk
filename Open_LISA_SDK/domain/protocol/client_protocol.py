@@ -21,7 +21,6 @@ COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
 COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
 COMMAND_GET_FILE = "GET_FILE"
-COMMAND_DELETE_FILE = "DELETE_FILE"
 COMMAND_GET_DIRECTORY_STRUCTURE = "GET_DIRECTORY_STRUCTURE"
 COMMAND_CREATE_DIRECTORY = "CREATE_DIRECTORY"
 COMMAND_DELETE_DIRECTORY = "DELETE_DIRECTORY"
@@ -336,25 +335,6 @@ class ClientProtocol:
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
             'create_directory', te - ts))
-
-        return
-
-    def delete_directory(self, remote_path):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_directory'))
-        ts = time()
-        self._message_protocol.send_msg(COMMAND_DELETE_DIRECTORY)
-        self._message_protocol.send_msg(remote_path)
-        response_type = str(self._message_protocol.receive_msg())
-
-        if not self.__is_valid_response(response_type):
-            error_message = self._message_protocol.receive_msg()
-            log.error("Error deleting remote directory '{}' : {}".format(
-                remote_path, error_message))
-            raise OpenLISAException(error_message)
-
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'delete_directory', te - ts))
 
         return
 
