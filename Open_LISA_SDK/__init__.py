@@ -197,6 +197,9 @@ class SDK:
             data = file.read()
             return self._client_protocol.send_file(data, file_target_name)
 
+    def delete_file(self, file_path):
+        return self._client_protocol.delete_file(file_path)
+
     def get_file(self, remote_file_name, file_target_name):
         file_bytes = self._client_protocol.get_file(remote_file_name)
         with open(file_target_name, "wb") as file:

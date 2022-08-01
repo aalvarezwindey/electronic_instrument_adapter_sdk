@@ -26,6 +26,7 @@ COMMAND_GET_DIRECTORY_STRUCTURE = "GET_DIRECTORY_STRUCTURE"
 COMMAND_CREATE_DIRECTORY = "CREATE_DIRECTORY"
 COMMAND_DELETE_DIRECTORY = "DELETE_DIRECTORY"
 COMMAND_SEND_FILE = "SEND_FILE"
+COMMAND_DELETE_FILE = "DELETE_FILE"
 COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
@@ -233,6 +234,25 @@ class ClientProtocol:
         te = time()
         log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
             'send_file', te - ts))
+
+        return response
+
+    def delete_file(self, file_path):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_DELETE_FILE)
+        self._message_protocol.send_msg(file_path)
+
+        response = self._message_protocol.receive_msg()
+        if not self.__is_valid_response(response):
+            err = self._message_protocol.receive_msg()
+            te = time()
+            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
+                'delete_file', te-ts))
+            raise InvalidPathException(err)
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('delete_file', te - ts))
 
         return response
 
