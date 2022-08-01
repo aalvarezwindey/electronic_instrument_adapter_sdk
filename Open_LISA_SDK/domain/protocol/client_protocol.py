@@ -22,6 +22,7 @@ COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
 COMMAND_GET_FILE = "GET_FILE"
 COMMAND_SEND_FILE = "SEND_FILE"
+COMMAND_DELETE_FILE = "DELETE_FILE"
 COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
@@ -206,6 +207,25 @@ class ClientProtocol:
         self._message_protocol.send_msg(COMMAND_SEND_FILE)
         self._message_protocol.send_msg(file_target_name)
         self._message_protocol.send_msg(file_bytes, encode=False)
+
+        response = self._message_protocol.receive_msg()
+        if not self.__is_valid_response(response):
+            err = self._message_protocol.receive_msg()
+            te = time()
+            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
+                'send_file', te-ts))
+            raise InvalidPathException(err)
+
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('send_file', te - ts))
+
+        return response
+
+    def delete_file(self, file_path):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('send_file'))
+        ts = time()
+        self._message_protocol.send_msg(COMMAND_DELETE_FILE)
+        self._message_protocol.send_msg(file_path)
 
         response = self._message_protocol.receive_msg()
         if not self.__is_valid_response(response):
