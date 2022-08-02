@@ -151,7 +151,6 @@ def test_send_command_and_save_result_in_server():
     result = sdk.send_command(instrument_id=MOCK_CAMERA_ID,
                               command_invocation="get_image", command_result_output_file="sandbox/output.jpg")
     assert result == None
-    sdk.get_directory_structure()
     sandbox_dir = sdk.get_directory_structure("sandbox", response_format="PYTHON")
     # TODO: assert here that output.jpg exists in server
     sdk.delete_file(file_path="sandbox/output.jpg")
