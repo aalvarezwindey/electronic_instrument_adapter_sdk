@@ -187,7 +187,7 @@ class ClientProtocol:
 
         # BYTES are sent as a base64 string
         if command_execution_type == "BYTES":
-            command_execution_value = base64.b64decode(command_execution_value)
+            command_execution_result_dict["value"] = base64.b64decode(command_execution_value)
         return command_execution_result_dict
 
     def send_command_and_result_as_json_string(self, id, command, command_result_output_file):
