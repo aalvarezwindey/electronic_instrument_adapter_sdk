@@ -15,6 +15,7 @@ COMMAND_DISCONNECT = "DISCONNECT"
 COMMAND_GET_INSTRUMENTS = "GET_INSTRUMENTS"
 COMMAND_GET_INSTRUMENT = "GET_INSTRUMENT"
 COMMAND_CREATE_INSTRUMENT = "CREATE_INSTRUMENT"
+COMMAND_CREATE_INSTRUMENT_COMMAND = "CREATE_INSTRUMENT_COMMAND"
 COMMAND_UPDATE_INSTRUMENT = "UPDATE_INSTRUMENT"
 COMMAND_DELETE_INSTRUMENT = "DELETE_INSTRUMENT"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
@@ -65,6 +66,19 @@ class ClientProtocol:
             return result_msg
         else:
             raise OpenLISAException(result_msg)
+
+    def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
+        self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
+        self._message_protocol.send_msg(instrument_id)
+        self._message_protocol.send_msg(command_type)
+        self._message_protocol.send_msg(json.dumps(new_command))
+        response_type = self._message_protocol.receive_msg()
+        result_msg = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response_type):
+            return result_msg
+        else:
+            raise OpenLISAException(result_msg)
+
 
     def update_instrument(self, id, updated_instrument):
         id = str(id)

@@ -158,11 +158,13 @@ class SDK:
             print(e)
             return False
 
-    def send_command(self, instrument_id, command_invocation, command_result_output_file=None, response_format=None, convert_result_to=None):
+    def send_command(self, instrument_id, command_invocation, command_result_output_file=None, response_format=None,
+                     convert_result_to=None):
         if response_format == SDK_RESPONSE_FORMAT_JSON or (
                 response_format == None and self._default_response_format == SDK_RESPONSE_FORMAT_JSON):
             # If response format is json convert_result_to is ignored
-            return self._client_protocol.send_command_and_result_as_json_string(instrument_id, command_invocation, command_result_output_file)
+            return self._client_protocol.send_command_and_result_as_json_string(instrument_id, command_invocation,
+                                                                                command_result_output_file)
 
         command_execution_result = self._client_protocol.send_command(
             instrument_id, command_invocation, command_result_output_file)
@@ -217,6 +219,18 @@ class SDK:
 
     def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
         return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)
+
+    def create_instrument_command(self, new_command, response_format=None):
+        instrument_id = new_command["instrument_id"]
+        command_type = new_command["type"]
+        assert command_type in ["SCPI", "CLIB"]
+
+        created_command_as_json_string = \
+            self._client_protocol.create_instrument_command_as_json_string(instrument_id=instrument_id,
+                                                                           command_type=command_type,
+                                                                           new_command=new_command)
+
+        return self.__format_response(created_command_as_json_string, response_format)
 
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
