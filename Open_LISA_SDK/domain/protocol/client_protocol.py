@@ -69,8 +69,6 @@ class ClientProtocol:
 
     def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
-        self._message_protocol.send_msg(str(instrument_id))
-        self._message_protocol.send_msg(command_type)
         self._message_protocol.send_msg(json.dumps(new_command))
         response_type = self._message_protocol.receive_msg()
         result_msg = self._message_protocol.receive_msg()
