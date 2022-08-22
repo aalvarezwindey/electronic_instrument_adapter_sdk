@@ -18,6 +18,7 @@ COMMAND_CREATE_INSTRUMENT = "CREATE_INSTRUMENT"
 COMMAND_CREATE_INSTRUMENT_COMMAND = "CREATE_INSTRUMENT_COMMAND"
 COMMAND_UPDATE_INSTRUMENT = "UPDATE_INSTRUMENT"
 COMMAND_DELETE_INSTRUMENT = "DELETE_INSTRUMENT"
+COMMAND_DELETE_INSTRUMENT_COMMAND = "DELETE_INSTRUMENT_COMMAND"
 COMMAND_GET_INSTRUMENT_COMMANDS = "GET_INSTRUMENT_COMMANDS"
 COMMAND_VALIDATE_COMMAND = "VALIDATE_COMMAND"
 COMMAND_SEND_COMMAND = "SEND_COMMAND"
@@ -77,6 +78,21 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
+    def delete_instrument_command(self, command_id):
+        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_instrument_command'))
+        ts = time()
+        command_id = str(command_id)
+        self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT_COMMAND)
+        self._message_protocol.send_msg(command_id)
+        response_type = self._message_protocol.receive_msg()
+        te = time()
+        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
+            'delete_instrument_command', te-ts))
+        if self.__is_valid_response(response_type):
+            return
+        else:
+            result_msg = self._message_protocol.receive_msg()
+            raise OpenLISAException(result_msg)
 
     def update_instrument(self, id, updated_instrument):
         id = str(id)

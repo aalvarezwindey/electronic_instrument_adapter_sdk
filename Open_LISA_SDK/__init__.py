@@ -232,6 +232,9 @@ class SDK:
 
         return self.__format_response(created_command_as_json_string, response_format)
 
+    def delete_instrument_command(self, command_id):
+        return self._client_protocol.delete_instrument_command(command_id)
+
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
         assert response_format in SDK_VALID_RESPONSE_FORMATS
