@@ -2,7 +2,6 @@
 # at port 8080 and with ENV=test
 # Example: python main.py  --env test --mode TCP --tcp_port 8080 --log-level INFO
 import json
-import os
 
 import pytest
 
@@ -11,6 +10,7 @@ from .. import SDK
 
 LOCALHOST = "127.0.0.1"
 SERVER_PORT = 8080
+LOG_LEVEL = "ERROR"
 TEST_TEKTRONIX_OSC_PHYSICAL_ADDRESS = "USB0::0x0699::0x0363::C107676::INSTR"
 TEST_TEKTRONIX_OSC_INSTRUMENT_ID = 1
 MOCK_CAMERA_ID = 2
@@ -33,7 +33,7 @@ VALID_INSTRUMENT_UPDATE_DICT = {
 
 
 def test_get_instruments_as_python_list_of_dicts():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     instruments = sdk.get_instruments(response_format="PYTHON")
     assert isinstance(instruments, list)
@@ -43,7 +43,7 @@ def test_get_instruments_as_python_list_of_dicts():
 
 
 def test_get_instruments_as_json_string():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     instruments_json_string = sdk.get_instruments(response_format="JSON")
     assert isinstance(instruments_json_string, str)
@@ -58,7 +58,7 @@ def test_get_instruments_as_json_string():
 
 
 def test_get_specific_instrument_as_python_dict():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     instrument = sdk.get_instrument(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="PYTHON")
@@ -69,7 +69,7 @@ def test_get_specific_instrument_as_python_dict():
 
 
 def test_get_specific_instrument_as_json_str():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     instrument_json = sdk.get_instrument(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="JSON")
@@ -80,7 +80,7 @@ def test_get_specific_instrument_as_json_str():
 
 
 def test_get_specific_instrument_that_does_not_exist_raises_exception():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
 
     with pytest.raises(OpenLISAException):
@@ -90,7 +90,7 @@ def test_get_specific_instrument_that_does_not_exist_raises_exception():
 
 
 def test_get_instrument_commands_as_python_list_of_dicts():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     commands = sdk.get_instrument_commands(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="PYTHON")
@@ -100,7 +100,7 @@ def test_get_instrument_commands_as_python_list_of_dicts():
 
 
 def test_get_instrument_commands_as_json_string():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     commands_json_string = sdk.get_instrument_commands(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID, response_format="JSON")
@@ -110,7 +110,7 @@ def test_get_instrument_commands_as_json_string():
 
 
 def test_is_valid_command_invocation_with_a_valid_invocation_returns_true():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     is_valid = sdk.is_valid_command_invocation(
         instrument_id=TEST_TEKTRONIX_OSC_INSTRUMENT_ID,
@@ -120,7 +120,7 @@ def test_is_valid_command_invocation_with_a_valid_invocation_returns_true():
 
 
 def test_is_valid_command_invocation_with_invalid_invocations_returns_false():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     invalid_invocations = [
         "unexisting command",
@@ -137,7 +137,7 @@ def test_is_valid_command_invocation_with_invalid_invocations_returns_false():
 
 
 def test_send_command_to_get_image_from_mock_camera():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     result = sdk.send_command(instrument_id=MOCK_CAMERA_ID,
                               command_invocation="get_image")
@@ -147,7 +147,7 @@ def test_send_command_to_get_image_from_mock_camera():
 
 
 def test_send_command_and_save_result_in_server():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     result = sdk.send_command(instrument_id=MOCK_CAMERA_ID,
                               command_invocation="get_image", command_result_output_file="sandbox/output.jpg")
@@ -162,7 +162,7 @@ def test_send_command_and_save_result_in_server():
 
 
 def test_instrument_CRUDs():
-    sdk = SDK(log_level="ERROR")
+    sdk = SDK(log_level=LOG_LEVEL)
     sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
     new_instrument = sdk.create_instrument(
         new_instrument=VALID_INSTRUMENT_CREATION_DICT, response_format="PYTHON")

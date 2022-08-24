@@ -1,6 +1,5 @@
 import base64
 import json
-from time import time
 
 from ..exceptions.invalid_path_exception import InvalidPathException
 from ...common.protocol.message_protocol import MessageProtocol
@@ -33,6 +32,40 @@ COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
 
 
+KB = 1024
+MB = KB * 1024
+
+
+def format_bytes(number):
+    if number < KB:
+        return "{} bytes".format((number))
+    elif number >= KB and number < MB:
+        return "{:.2f} KB".format((number / KB))
+    elif number >= MB:
+        return "{:.2f} MB".format((number / MB))
+
+
+def with_message_protocol_track(method):
+    def inner(ref, *args, **kwargs):
+        ref._message_protocol.start_track()
+        method_result = method(ref, *args, **kwargs)
+        track = ref._message_protocol.get_track()
+        method_name = method.__name__.replace("_as_json_string", "")
+        total_bytes = track.bytes_sent + track.bytes_received
+        elapsed = track.finish_timestamp - track.begin_timestamp
+        throughput = total_bytes / elapsed
+        log.debug("[LATENCY][method={}][elapsed_time={:.2f} seconds][sent={}][received={}][total_transferred_bytes={}][throughput={}/s]".format(
+            method_name,
+            track.finish_timestamp - track.begin_timestamp,
+            format_bytes(track.bytes_sent),
+            format_bytes(track.bytes_received),
+            format_bytes(total_bytes),
+            format_bytes(throughput)
+        ))
+        return method_result
+    return inner
+
+
 class ClientProtocol:
     def __init__(self, message_protocol: MessageProtocol):
         self._message_protocol = message_protocol
@@ -46,18 +79,11 @@ class ClientProtocol:
         raise Exception("unknown response type: '{}'".format(response))
 
     def disconnect(self):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('disconnect'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_DISCONNECT)
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'disconnect', te-ts))
         self._message_protocol.disconnect()
         return
 
-    def create_instrument(self, new_instrument):
-        return json.loads(self.get_instrument_as_json_string(new_instrument))
-
+    @with_message_protocol_track
     def create_instrument_as_json_string(self, new_instrument):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT)
         self._message_protocol.send_msg(json.dumps(new_instrument))
@@ -68,6 +94,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
+    @with_message_protocol_track
     def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
         self._message_protocol.send_msg(json.dumps(new_command))
@@ -78,26 +105,19 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
+    @with_message_protocol_track
     def delete_instrument_command(self, command_id):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_instrument_command'))
-        ts = time()
         command_id = str(command_id)
         self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT_COMMAND)
         self._message_protocol.send_msg(command_id)
         response_type = self._message_protocol.receive_msg()
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'delete_instrument_command', te-ts))
         if self.__is_valid_response(response_type):
             return
         else:
             result_msg = self._message_protocol.receive_msg()
             raise OpenLISAException(result_msg)
 
-    def update_instrument(self, id, updated_instrument):
-        id = str(id)
-        return json.loads(self.update_instrument_as_json_string(id, updated_instrument))
-
+    @with_message_protocol_track
     def update_instrument_as_json_string(self, id, updated_instrument):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_UPDATE_INSTRUMENT)
@@ -110,10 +130,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    def delete_instrument(self, id):
-        id = str(id)
-        return json.loads(self.delete_instrument_as_json_string(id))
-
+    @with_message_protocol_track
     def delete_instrument_as_json_string(self, id):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT)
@@ -125,79 +142,49 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    def get_instruments(self):
-        return json.loads(self.get_instruments_as_json_string())
-
+    @with_message_protocol_track
     def get_instruments_as_json_string(self):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_instruments'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENTS)
         result = self._message_protocol.receive_msg()
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'get_instruments', te-ts))
         return result
 
-    def get_instrument(self, id):
-        id = str(id)
-        return json.loads(self.get_instrument_as_json_string(id))
-
+    @with_message_protocol_track
     def get_instrument_as_json_string(self, id):
         id = str(id)
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_instrument'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT)
         self._message_protocol.send_msg(id)
         response_type = self._message_protocol.receive_msg()
         result_msg = self._message_protocol.receive_msg()
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'get_instrument', te-ts))
         if self.__is_valid_response(response_type):
             return result_msg
         else:
             raise OpenLISAException(result_msg)
 
-    def get_instrument_commands(self, id):
-        return json.loads(self.get_instrument_commands_as_json_string(id))
-
+    @with_message_protocol_track
     def get_instrument_commands_as_json_string(self, id):
         id = str(id)
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format(
-            'get_instrument_commands'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT_COMMANDS)
         self._message_protocol.send_msg(id)
         response_type = self._message_protocol.receive_msg()
         result_msg = self._message_protocol.receive_msg()
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'get_instrument_commands', te-ts))
         if self.__is_valid_response(response_type):
             return result_msg
         else:
             raise OpenLISAException(result_msg)
 
+    @with_message_protocol_track
     def validate_command(self, id, command):
         id = str(id)
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('validate_command'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_VALIDATE_COMMAND)
         self._message_protocol.send_msg(id)
         self._message_protocol.send_msg(command)
         response_type = self._message_protocol.receive_msg()
         if not self.__is_valid_response(response_type):
             err = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-                'validate_command', te-ts))
             raise InvalidCommandException(
                 "command '{}' is not valid: {}".format(command, err))
 
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'validate_command', te-ts))
-
+    @with_message_protocol_track
     def send_command(self, id, command, command_result_output_file):
         id = str(id)
         json_str = self.send_command_and_result_as_json_string(
@@ -215,14 +202,13 @@ class ClientProtocol:
 
         # BYTES are sent as a base64 string
         if command_execution_type == "BYTES":
-            command_execution_result_dict["value"] = base64.b64decode(command_execution_value)
+            command_execution_result_dict["value"] = base64.b64decode(
+                command_execution_value)
         return command_execution_result_dict
 
+    @with_message_protocol_track
     def send_command_and_result_as_json_string(self, id, command, command_result_output_file):
         id = str(id)
-        log.debug("[LATENCY_MEASURE][INIT][{}][command={}]".format(
-            'send_command', command))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_SEND_COMMAND)
         command_execution_request = {
             "instrument_id": id,
@@ -233,24 +219,17 @@ class ClientProtocol:
         response_type = self._message_protocol.receive_msg()
         if self.__is_valid_response(response_type):
             command_execution_result_json_str = None
-            if not command_result_output_file: # if result was saved in Server this message is not sent
+            if not command_result_output_file:  # if result was saved in Server this message is not sent
                 command_execution_result_json_str = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={} seconds]".format(
-                'send_command', command, te-ts))
 
             return command_execution_result_json_str
         else:
             err = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][command={}][ELAPSED={} seconds]".format(
-                'send_command', command, te-ts))
             raise InvalidCommandException(
                 "command '{}' for instrument {} is not valid: {}".format(command, id, err))
 
+    @with_message_protocol_track
     def send_file(self, file_bytes, file_target_name):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('send_file'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_SEND_FILE)
         self._message_protocol.send_msg(file_target_name)
         self._message_protocol.send_msg(file_bytes, encode=False)
@@ -258,39 +237,24 @@ class ClientProtocol:
         response = self._message_protocol.receive_msg()
         if not self.__is_valid_response(response):
             err = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-                'send_file', te-ts))
             raise InvalidPathException(err)
-
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'send_file', te - ts))
 
         return response
 
+    @with_message_protocol_track
     def delete_file(self, file_path):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_file'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_DELETE_FILE)
         self._message_protocol.send_msg(file_path)
 
         response = self._message_protocol.receive_msg()
         if not self.__is_valid_response(response):
             err = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-                'delete_file', te-ts))
             raise InvalidPathException(err)
-
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format('delete_file', te - ts))
 
         return response
 
+    @with_message_protocol_track
     def get_file(self, remote_file_name):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_file'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_GET_FILE)
         self._message_protocol.send_msg(remote_file_name)
         response_type = str(self._message_protocol.receive_msg())
@@ -303,15 +267,10 @@ class ClientProtocol:
 
         file_bytes = self._message_protocol.receive_msg(decode=False)
 
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'get_file', te - ts))
-
         return file_bytes
 
+    @with_message_protocol_track
     def delete_file(self, remote_file):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('delete_file'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_DELETE_FILE)
         self._message_protocol.send_msg(remote_file)
         response_type = str(self._message_protocol.receive_msg())
@@ -322,15 +281,8 @@ class ClientProtocol:
                 remote_file, error_message))
             raise OpenLISAException(error_message)
 
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'delete_file', te - ts))
-
-        return
-
+    @with_message_protocol_track
     def get_directory_structure_as_json_string(self, remote_path):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('get_directory_structure'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_GET_DIRECTORY_STRUCTURE)
         self._message_protocol.send_msg(remote_path)
         response_type = str(self._message_protocol.receive_msg())
@@ -342,18 +294,10 @@ class ClientProtocol:
             raise OpenLISAException(error_message)
         else:
             directory_structure_as_json_string = self._message_protocol.receive_msg()
-            te = time()
-            log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-                'get_directory_structure', te - ts))
             return directory_structure_as_json_string
 
-
-    def get_directory_structure(self, remote_path):
-        return json.loads(self.get_directory_structure_as_json_string(remote_path))
-
+    @with_message_protocol_track
     def create_directory(self, remote_path, new_directory_name):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('create_directory'))
-        ts = time()
         self._message_protocol.send_msg(COMMAND_CREATE_DIRECTORY)
         self._message_protocol.send_msg(remote_path)
         self._message_protocol.send_msg(new_directory_name)
@@ -365,16 +309,8 @@ class ClientProtocol:
                 remote_path, error_message))
             raise OpenLISAException(error_message)
 
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'create_directory', te - ts))
-
-        return
-
-
+    @with_message_protocol_track
     def execute_bash_command(self, command, capture_stdout, capture_stderr):
-        log.debug("[LATENCY_MEASURE][INIT][{}]".format('execute_bash_command'))
-        ts = time()
         stdout = None
         stderr = None
         self._message_protocol.send_msg(COMMAND_EXECUTE_BASH)
@@ -392,10 +328,6 @@ class ClientProtocol:
         if capture_stderr:
             stderr = str(self._message_protocol.receive_msg())
             log.debug("Remote execution command stderr: {}".format(stderr))
-
-        te = time()
-        log.debug("[LATENCY_MEASURE][FINISH][{}][ELAPSED={} seconds]".format(
-            'execute_bash_command', te - ts))
 
         return status_code, stdout, stderr
 
