@@ -212,7 +212,7 @@ class SDK:
         return self.__format_response(directory_structure, response_format)
 
     def create_directory(self, remote_path, new_directory):
-        return self._client_protocol.create_directory(self, remote_path, new_directory)
+        return self._client_protocol.create_directory(remote_path, new_directory)
 
     def delete_directory(self, remote_path):
         return self._client_protocol.delete_directory(remote_path)
