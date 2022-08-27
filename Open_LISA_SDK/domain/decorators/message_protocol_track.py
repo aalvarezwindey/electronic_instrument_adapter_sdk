@@ -12,7 +12,7 @@ def with_message_protocol_track_log(method):
         total_bytes = track.bytes_sent + track.bytes_received
         elapsed = track.finish_timestamp - track.begin_timestamp
         if elapsed == 0:
-            elapsed = 0.01
+            elapsed = 0.0000001
         throughput = total_bytes / elapsed
         log.debug("[LATENCY][method={}][communication_protocol={}][elapsed_time={:.2f} seconds][sent={}][received={}][total_transferred_bytes={}][throughput={}/s]".format(
             method_name,
