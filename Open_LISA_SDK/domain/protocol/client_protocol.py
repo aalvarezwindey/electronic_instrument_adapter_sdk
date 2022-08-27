@@ -278,6 +278,18 @@ class ClientProtocol:
             raise OpenLISAException(error_message)
 
     @with_message_protocol_track(output="LOG")
+    def delete_directory(self, remote_path):
+        self._message_protocol.send_msg(COMMAND_DELETE_DIRECTORY)
+        self._message_protocol.send_msg(remote_path)
+        response_type = str(self._message_protocol.receive_msg())
+
+        if not self.__is_valid_response(response_type):
+            error_message = self._message_protocol.receive_msg()
+            log.error("Error deleting remote directory '{}' : {}".format(
+                remote_path, error_message))
+            raise OpenLISAException(error_message)
+
+    @with_message_protocol_track(output="LOG")
     def execute_bash_command(self, command, capture_stdout, capture_stderr):
         stdout = None
         stderr = None
