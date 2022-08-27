@@ -6,7 +6,7 @@ from ...logging import log
 
 class MessageProtocolRS232(MessageProtocol):
     def __init__(self, rs232_connection):
-        super().__init__()
+        super().__init__(protocol_name="SERIAL")
         self._connection = rs232_connection
         if not self._connection.isOpen():
             self._connection.open()

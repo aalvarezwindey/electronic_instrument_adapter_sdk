@@ -2,15 +2,16 @@ from time import time
 
 
 class MessageProtocolTrack:
-    def __init__(self, begin_ts, finish_ts, rcv_bytes, snt_bytes):
+    def __init__(self, begin_ts, finish_ts, rcv_bytes, snt_bytes, protocol):
         self.begin_timestamp = begin_ts
         self.finish_timestamp = finish_ts
         self.bytes_received = rcv_bytes
         self.bytes_sent = snt_bytes
+        self.protocol = protocol
 
 
 class MessageProtocol:
-    def __init__(self):
+    def __init__(self, protocol_name):
         self.MSG_LEN_BYTES_AMOUNT = 4
 
         # track
@@ -18,6 +19,7 @@ class MessageProtocol:
         self._finish_track_timestamp = time()
         self._received_bytes_amount_track = 0
         self._sent_bytes_amount_track = 0
+        self._protocol = protocol_name
 
     # Initiates track information until
 
@@ -34,7 +36,8 @@ class MessageProtocol:
             begin_ts=self._begin_track_timestamp,
             finish_ts=self._finish_track_timestamp,
             rcv_bytes=self._received_bytes_amount_track,
-            snt_bytes=self._sent_bytes_amount_track
+            snt_bytes=self._sent_bytes_amount_track,
+            protocol=self._protocol
         )
 
     def disconnect(self):

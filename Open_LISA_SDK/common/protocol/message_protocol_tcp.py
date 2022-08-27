@@ -7,7 +7,7 @@ from .message_protocol import MessageProtocol
 # Source: https://stackoverflow.com/questions/17667903/python-socket-receive-large-amount-of-data
 class MessageProtocolTCP(MessageProtocol):
     def __init__(self, tcp_socket):
-        super().__init__()
+        super().__init__(protocol_name="TCP")
         self._socket = tcp_socket
 
     def disconnect(self):

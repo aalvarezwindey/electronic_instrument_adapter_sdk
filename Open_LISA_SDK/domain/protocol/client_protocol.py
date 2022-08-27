@@ -54,8 +54,9 @@ def with_message_protocol_track(method):
         total_bytes = track.bytes_sent + track.bytes_received
         elapsed = track.finish_timestamp - track.begin_timestamp
         throughput = total_bytes / elapsed
-        log.debug("[LATENCY][method={}][elapsed_time={:.2f} seconds][sent={}][received={}][total_transferred_bytes={}][throughput={}/s]".format(
+        log.debug("[LATENCY][method={}][communication_protocol={}][elapsed_time={:.2f} seconds][sent={}][received={}][total_transferred_bytes={}][throughput={}/s]".format(
             method_name,
+            track.protocol,
             track.finish_timestamp - track.begin_timestamp,
             format_bytes(track.bytes_sent),
             format_bytes(track.bytes_received),
