@@ -1,6 +1,8 @@
 import base64
 import json
 
+from ..decorators.message_protocol_track import with_message_protocol_track
+
 from ..exceptions.invalid_path_exception import InvalidPathException
 from ...common.protocol.message_protocol import MessageProtocol
 from ..exceptions.sdk_exception import OpenLISAException
@@ -32,41 +34,6 @@ COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
 
 
-KB = 1024
-MB = KB * 1024
-
-
-def format_bytes(number):
-    if number < KB:
-        return "{} bytes".format((number))
-    elif number >= KB and number < MB:
-        return "{:.2f} KB".format((number / KB))
-    elif number >= MB:
-        return "{:.2f} MB".format((number / MB))
-
-
-def with_message_protocol_track(method):
-    def inner(ref, *args, **kwargs):
-        ref._message_protocol.start_track()
-        method_result = method(ref, *args, **kwargs)
-        track = ref._message_protocol.get_track()
-        method_name = method.__name__.replace("_as_json_string", "")
-        total_bytes = track.bytes_sent + track.bytes_received
-        elapsed = track.finish_timestamp - track.begin_timestamp
-        throughput = total_bytes / elapsed
-        log.debug("[LATENCY][method={}][communication_protocol={}][elapsed_time={:.2f} seconds][sent={}][received={}][total_transferred_bytes={}][throughput={}/s]".format(
-            method_name,
-            track.protocol,
-            track.finish_timestamp - track.begin_timestamp,
-            format_bytes(track.bytes_sent),
-            format_bytes(track.bytes_received),
-            format_bytes(total_bytes),
-            format_bytes(throughput)
-        ))
-        return method_result
-    return inner
-
-
 class ClientProtocol:
     def __init__(self, message_protocol: MessageProtocol):
         self._message_protocol = message_protocol
@@ -84,7 +51,7 @@ class ClientProtocol:
         self._message_protocol.disconnect()
         return
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def create_instrument_as_json_string(self, new_instrument):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT)
         self._message_protocol.send_msg(json.dumps(new_instrument))
@@ -95,7 +62,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
         self._message_protocol.send_msg(json.dumps(new_command))
@@ -106,7 +73,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def delete_instrument_command(self, command_id):
         command_id = str(command_id)
         self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT_COMMAND)
@@ -118,7 +85,7 @@ class ClientProtocol:
             result_msg = self._message_protocol.receive_msg()
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def update_instrument_as_json_string(self, id, updated_instrument):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_UPDATE_INSTRUMENT)
@@ -131,7 +98,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def delete_instrument_as_json_string(self, id):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_DELETE_INSTRUMENT)
@@ -143,13 +110,13 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def get_instruments_as_json_string(self):
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENTS)
         result = self._message_protocol.receive_msg()
         return result
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def get_instrument_as_json_string(self, id):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT)
@@ -161,7 +128,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def get_instrument_commands_as_json_string(self, id):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT_COMMANDS)
@@ -173,7 +140,7 @@ class ClientProtocol:
         else:
             raise OpenLISAException(result_msg)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def validate_command(self, id, command):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_VALIDATE_COMMAND)
@@ -185,7 +152,7 @@ class ClientProtocol:
             raise InvalidCommandException(
                 "command '{}' is not valid: {}".format(command, err))
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def send_command(self, id, command, command_result_output_file):
         id = str(id)
         json_str = self.send_command_and_result_as_json_string(
@@ -207,7 +174,7 @@ class ClientProtocol:
                 command_execution_value)
         return command_execution_result_dict
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def send_command_and_result_as_json_string(self, id, command, command_result_output_file):
         id = str(id)
         self._message_protocol.send_msg(COMMAND_SEND_COMMAND)
@@ -229,7 +196,7 @@ class ClientProtocol:
             raise InvalidCommandException(
                 "command '{}' for instrument {} is not valid: {}".format(command, id, err))
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def send_file(self, file_bytes, file_target_name):
         self._message_protocol.send_msg(COMMAND_SEND_FILE)
         self._message_protocol.send_msg(file_target_name)
@@ -242,7 +209,7 @@ class ClientProtocol:
 
         return response
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def delete_file(self, file_path):
         self._message_protocol.send_msg(COMMAND_DELETE_FILE)
         self._message_protocol.send_msg(file_path)
@@ -254,7 +221,7 @@ class ClientProtocol:
 
         return response
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def get_file(self, remote_file_name):
         self._message_protocol.send_msg(COMMAND_GET_FILE)
         self._message_protocol.send_msg(remote_file_name)
@@ -270,7 +237,7 @@ class ClientProtocol:
 
         return file_bytes
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def delete_file(self, remote_file):
         self._message_protocol.send_msg(COMMAND_DELETE_FILE)
         self._message_protocol.send_msg(remote_file)
@@ -282,7 +249,7 @@ class ClientProtocol:
                 remote_file, error_message))
             raise OpenLISAException(error_message)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def get_directory_structure_as_json_string(self, remote_path):
         self._message_protocol.send_msg(COMMAND_GET_DIRECTORY_STRUCTURE)
         self._message_protocol.send_msg(remote_path)
@@ -297,7 +264,7 @@ class ClientProtocol:
             directory_structure_as_json_string = self._message_protocol.receive_msg()
             return directory_structure_as_json_string
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def create_directory(self, remote_path, new_directory_name):
         self._message_protocol.send_msg(COMMAND_CREATE_DIRECTORY)
         self._message_protocol.send_msg(remote_path)
@@ -310,7 +277,7 @@ class ClientProtocol:
                 remote_path, error_message))
             raise OpenLISAException(error_message)
 
-    @with_message_protocol_track
+    @with_message_protocol_track(output="LOG")
     def execute_bash_command(self, command, capture_stdout, capture_stderr):
         stdout = None
         stderr = None
