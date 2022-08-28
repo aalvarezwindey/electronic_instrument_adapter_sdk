@@ -15,6 +15,7 @@ ERROR_RESPONSE = "ERROR"
 COMMAND_DISCONNECT = "DISCONNECT"
 COMMAND_GET_INSTRUMENTS = "GET_INSTRUMENTS"
 COMMAND_GET_INSTRUMENT = "GET_INSTRUMENT"
+COMMAND_GET_DETECTED_PHYSICAL_ADDRESSES = "GET_DETECTED_PHYSICAL_ADDRESSES"
 COMMAND_CREATE_INSTRUMENT = "CREATE_INSTRUMENT"
 COMMAND_CREATE_INSTRUMENT_COMMAND = "CREATE_INSTRUMENT_COMMAND"
 COMMAND_UPDATE_INSTRUMENT = "UPDATE_INSTRUMENT"
@@ -121,6 +122,17 @@ class ClientProtocol:
         id = str(id)
         self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT)
         self._message_protocol.send_msg(id)
+        response_type = self._message_protocol.receive_msg()
+        result_msg = self._message_protocol.receive_msg()
+        if self.__is_valid_response(response_type):
+            return result_msg
+        else:
+            raise OpenLISAException(result_msg)
+
+    @with_message_protocol_track(output="LOG")
+    def get_detected_physical_addresses(self):
+        self._message_protocol.send_msg(
+            COMMAND_GET_DETECTED_PHYSICAL_ADDRESSES)
         response_type = self._message_protocol.receive_msg()
         result_msg = self._message_protocol.receive_msg()
         if self.__is_valid_response(response_type):

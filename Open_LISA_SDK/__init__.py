@@ -143,6 +143,14 @@ class SDK:
             instrument_id)
         return self.__format_response(instrument_as_json_string, response_format)
 
+    def get_detected_physical_addresses(self, response_format=None):
+        """
+        Returns the detected physical addresses by the server that are not associated with a
+        registered instrument
+        """
+        detected_physical_addresses_as_json_string = self._client_protocol.get_detected_physical_addresses()
+        return self.__format_response(detected_physical_addresses_as_json_string, response_format)
+
     def get_instrument_commands(self, instrument_id, response_format=None):
         commands_as_json_string = self._client_protocol.get_instrument_commands_as_json_string(
             id=instrument_id)
@@ -208,7 +216,8 @@ class SDK:
             file.write(file_bytes)
 
     def get_directory_structure(self, remote_path, response_format=None):
-        directory_structure = self._client_protocol.get_directory_structure_as_json_string(remote_path)
+        directory_structure = self._client_protocol.get_directory_structure_as_json_string(
+            remote_path)
         return self.__format_response(directory_structure, response_format)
 
     def create_directory(self, remote_path, new_directory):
