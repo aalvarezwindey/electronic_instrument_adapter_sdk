@@ -51,6 +51,7 @@ class SDK:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.settimeout(CONNECT_TIMEOUT_SECONDS)
             sock.connect(server_address)
+            sock.settimeout(None)
             self._client_protocol = ClientProtocol(MessageProtocolTCP(sock))
         except Exception as e:
             log.error(e)
