@@ -46,9 +46,12 @@ class SDK:
 
     def connect_through_TCP(self, host, port):
         try:
+            CONNECTION_TIMEOUT = 5
             server_address = (host, int(port))
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(CONNECTION_TIMEOUT)
             sock.connect(server_address)
+            sock.settimeout(None)
             self._client_protocol = ClientProtocol(MessageProtocolTCP(sock))
         except Exception as e:
             log.error(e)
