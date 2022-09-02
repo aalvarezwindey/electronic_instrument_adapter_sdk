@@ -1,14 +1,16 @@
 import json
 import socket
+from threading import Lock
 import traceback
 import serial
 import serial.tools.list_ports
+
+from Open_LISA_SDK.domain.decorators.with_lock import with_lock
 
 from .domain.exceptions.invalid_command import InvalidCommandException
 
 from .common.protocol.message_protocol_rs232 import MessageProtocolRS232
 from .common.protocol.message_protocol_tcp import MessageProtocolTCP
-from .domain.exceptions.sdk_exception import OpenLISAException
 
 from .domain.protocol.client_protocol import ClientProtocol
 
@@ -36,6 +38,8 @@ AVAILABLE_CONVERT_TYPES = [
     CONVERT_TO_INT,
 ]
 
+LOCK = Lock()
+
 
 class SDK:
     def __init__(self, log_level="WARNING", default_response_format=SDK_RESPONSE_FORMAT_PYTHON):
@@ -44,6 +48,7 @@ class SDK:
 
         self._default_response_format = default_response_format
 
+    @with_lock(LOCK)
     def connect_through_TCP(self, host, port):
         try:
             CONNECTION_TIMEOUT = 5
@@ -58,6 +63,7 @@ class SDK:
             raise CouldNotConnectToServerException(
                 "could not connect with server at {} through TCP".format(server_address))
 
+    @with_lock(LOCK)
     def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE, port=None):
         # Discover server RS232
         TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
@@ -110,27 +116,33 @@ class SDK:
         self._client_protocol = ClientProtocol(
             MessageProtocolRS232(rs232_connection=connection))
 
+    @with_lock(LOCK)
     def disconnect(self):
         self._client_protocol.disconnect()
 
+    @with_lock(LOCK)
     def __reset_databases(self):
         return self._client_protocol.reset_databases()
 
+    @with_lock(LOCK)
     def create_instrument(self, new_instrument, response_format=None):
         created_instrument_as_json_string = self._client_protocol.create_instrument_as_json_string(
             new_instrument)
         return self.__format_response(created_instrument_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def update_instrument(self, instrument_id, updated_instrument, response_format=None):
         updated_instrument_as_json_string = self._client_protocol.update_instrument_as_json_string(
             instrument_id, updated_instrument)
         return self.__format_response(updated_instrument_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def delete_instrument(self, instrument_id, response_format=None):
         deleted_instrument = self._client_protocol.delete_instrument_as_json_string(
             instrument_id)
         return self.__format_response(deleted_instrument, response_format)
 
+    @with_lock(LOCK)
     def get_instruments(self, response_format=None):
         """
         Returns the list of instruments dictionaries
@@ -138,6 +150,7 @@ class SDK:
         instruments_as_json_string = self._client_protocol.get_instruments_as_json_string()
         return self.__format_response(instruments_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def get_instrument(self, instrument_id, response_format=None):
         """
         Returns the instrument with the ID specified, raises if not found
@@ -146,6 +159,7 @@ class SDK:
             instrument_id)
         return self.__format_response(instrument_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def get_detected_physical_addresses(self, response_format=None):
         """
         Returns the detected physical addresses by the server that are not associated with a
@@ -154,11 +168,13 @@ class SDK:
         detected_physical_addresses_as_json_string = self._client_protocol.get_detected_physical_addresses()
         return self.__format_response(detected_physical_addresses_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def get_instrument_commands(self, instrument_id, response_format=None):
         commands_as_json_string = self._client_protocol.get_instrument_commands_as_json_string(
             id=instrument_id)
         return self.__format_response(commands_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def is_valid_command_invocation(self, instrument_id, command_invocation):
         try:
             self._client_protocol.validate_command(
@@ -169,6 +185,7 @@ class SDK:
             print(e)
             return False
 
+    @with_lock(LOCK)
     def send_command(self, instrument_id, command_invocation, command_result_output_file=None, response_format=None,
                      convert_result_to=None):
         if response_format == SDK_RESPONSE_FORMAT_JSON or (
@@ -205,33 +222,41 @@ class SDK:
 
         return command_execution_result
 
+    @with_lock(LOCK)
     def send_file(self, file_path, file_target_name):
         with open(file_path, "rb") as file:
             data = file.read()
             return self._client_protocol.send_file(data, file_target_name)
 
+    @with_lock(LOCK)
     def delete_file(self, file_path):
         return self._client_protocol.delete_file(file_path)
 
+    @with_lock(LOCK)
     def get_file(self, remote_file_name, file_target_name):
         file_bytes = self._client_protocol.get_file(remote_file_name)
         with open(file_target_name, "wb") as file:
             file.write(file_bytes)
 
+    @with_lock(LOCK)
     def get_directory_structure(self, remote_path, response_format=None):
         directory_structure = self._client_protocol.get_directory_structure_as_json_string(
             remote_path)
         return self.__format_response(directory_structure, response_format)
 
+    @with_lock(LOCK)
     def create_directory(self, remote_path, new_directory):
         return self._client_protocol.create_directory(remote_path, new_directory)
 
+    @with_lock(LOCK)
     def delete_directory(self, remote_path):
         return self._client_protocol.delete_directory(remote_path)
 
+    @with_lock(LOCK)
     def execute_bash_command(self, command, capture_stdout=False, capture_stderr=False):
         return self._client_protocol.execute_bash_command(command, capture_stdout, capture_stderr)
 
+    @with_lock(LOCK)
     def create_instrument_command(self, new_command, response_format=None):
         instrument_id = new_command["instrument_id"]
         command_type = new_command["type"]
@@ -244,6 +269,7 @@ class SDK:
 
         return self.__format_response(created_command_as_json_string, response_format)
 
+    @with_lock(LOCK)
     def delete_instrument_command(self, command_id):
         return self._client_protocol.delete_instrument_command(command_id)
 
