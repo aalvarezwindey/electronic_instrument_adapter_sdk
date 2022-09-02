@@ -5,6 +5,8 @@ import json
 
 import pytest
 
+from ..domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
+
 from ..domain.exceptions.sdk_exception import OpenLISAException
 from .. import SDK
 
@@ -55,6 +57,17 @@ def test_get_instruments_as_json_string():
             instruments_json_string))
 
     sdk.disconnect()
+
+
+def test_lock_is_released_after_exceptions():
+    sdk = SDK(log_level=LOG_LEVEL)
+    sdk.connect_through_TCP(host=LOCALHOST, port=SERVER_PORT)
+    with pytest.raises(OpenLISAException):
+        sdk.get_instrument(instrument_id=UNEXISTING_INSTRUMENT_ID,
+                           response_format="PYTHON")
+    with pytest.raises(OpenLISAException):
+        sdk.get_instrument(instrument_id=UNEXISTING_INSTRUMENT_ID,
+                           response_format="PYTHON")
 
 
 def test_get_specific_instrument_as_python_dict():
