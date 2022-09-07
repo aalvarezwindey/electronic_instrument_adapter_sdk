@@ -16,7 +16,7 @@ setup(
     author_email='ajalvarez@fi.uba.ar',      # Type in your E-Mail
     # Provide either the link to your github or to your website
     url='https://github.com/aalvarezwindey/Open-LISA-SDK',
-    readme='https://github.com/aalvarezwindey/Open-LISA-SDK/README.md'
+    readme='https://github.com/aalvarezwindey/Open-LISA-SDK/README.md',
     download_url='https://github.com/aalvarezwindey/Open-LISA-SDK/archive/refs/tags/{}.tar.gz'.format(
         VERSION_PLACEHOLDER),
     keywords=['SDK', 'ELECTRONIC', 'INSTRUMENT', 'ADAPTER', 'FIUBA', 'OPEN',
