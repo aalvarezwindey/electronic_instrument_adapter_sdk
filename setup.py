@@ -1,7 +1,12 @@
 
+from pathlib import Path
 from setuptools import setup, find_packages
 
-VERSION_PLACEHOLDER = '0.9.8'
+VERSION_PLACEHOLDER = '0.9.9'
+
+# read the contents of your README file
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name='Open_LISA_SDK',         # How you named your package folder (MyLib)
@@ -12,6 +17,8 @@ setup(
     license='MIT',
     # Give a short description about your library
     description='SDK for Laboratory Instrument Station Adapter',
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     author='Ariel Alvarez Windey & Gabriel Robles',                   # Type in your name
     author_email='ajalvarez@fi.uba.ar',      # Type in your E-Mail
     # Provide either the link to your github or to your website
