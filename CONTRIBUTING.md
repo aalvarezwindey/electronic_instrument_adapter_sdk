@@ -20,3 +20,7 @@ After commiting your changes run the script `./create_release.py`. This will:
 5. Push tag to current branch
 
 After that, the CI with GitHub action will build and publish the new version according to the steps provided in `.github/workflows/main.yml`
+
+## Updating docs
+
+If you change docstring you must regenerate API DOC manually. Install `pdoc` and run `pdoc Open_LISA_SDK >> output.md`. Then adjust manually the output in order to make it prettier (for example, remove additional indents). Note: be sure to remove decorators before generating doc.
