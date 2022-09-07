@@ -2,7 +2,7 @@
 from pathlib import Path
 from setuptools import setup, find_packages
 
-VERSION_PLACEHOLDER = '0.9.9'
+VERSION_PLACEHOLDER = '0.9.10'
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
