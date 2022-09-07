@@ -19,7 +19,7 @@ sdk = Open_LISA_SDK.SDK()
 sdk.connect_through_RS232()
 
 # List instruments
-print(sdk.list_instruments())
+print(sdk.get_instruments())
 ```
 
 ### Listar los comandos disponibles para un instrumento específico
@@ -32,7 +32,7 @@ import Open_LISA_SDK
 sdk = Open_LISA_SDK.SDK()
 sdk.connect_through_RS232()
 
-instruments = sdk.list_instruments()
+instruments = sdk.get_instruments()
 
 if len(instruments) != 0:
   instrument = instruments[0]
@@ -54,7 +54,7 @@ import Open_LISA_SDK
 sdk = Open_LISA_SDK.SDK()
 sdk.connect_through_RS232()
 
-instruments = sdk.list_instruments()
+instruments = sdk.get_instruments()
 
 if len(instruments) != 0:
   instrument = instruments[0]
@@ -81,7 +81,7 @@ import matplotlib.pyplot as plt
 sdk = Open_LISA_SDK.SDK(args.host, args.port)
 sdk.connect_through_RS232()
 
-instruments = sdk.list_instruments()
+instruments = sdk.get_instruments()
 osc_tds1002b = None
 for i in instruments:
   if i.ID == "USB0::0x0699::0x0363::C107676::INSTR":
@@ -129,7 +129,7 @@ def main():
   sdk = Open_LISA_SDK.SDK(args.host, args.port)
   sdk.connect_through_RS232()
 
-  instruments = sdk.list_instruments()
+  instruments = sdk.get_instruments()
   cammera = None
   for i in instruments:
     if i.ID == "CAM_ID":
@@ -168,7 +168,7 @@ sdk.connect_through_RS232()
 
 try
     % Se obtienen los instrumentos
-    instruments = sdk.list_instruments()
+    instruments = sdk.get_instruments()
 
     % El ID del oscilloscopio es: USB0::0x0699::0x0363::C107676::INSTR
     osciliscopio = sdk.get_instrument("USB0::0x0699::0x0363::C107676::INSTR")

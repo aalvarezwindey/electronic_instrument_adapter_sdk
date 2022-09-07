@@ -6,7 +6,7 @@ Make your changes in the SDK: `/Open_LISA_SDK`
 
 Update `setup.template.py` if necessary:
 
-1. Add external packages to `intal_requires` property. Only for no standard Python packages.
+1. Add external packages to `install_requires` property. Only for no standard Python packages.
 2. Update classifiers if applies (development status and Python version).
 
 ## Publish a new version
