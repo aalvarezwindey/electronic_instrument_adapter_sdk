@@ -18,14 +18,12 @@ python <example_script_name>.py
 
 ## API Doc
 
-`SDK(log_level='WARNING', default_response_format='PYTHON')`: SDK for interact with Open LISA Server
+`SDK(log_level='WARNING', default_response_format='PYTHON')`: Initializes the SDK with the specified log level and default response format of the methods
 
-Initializes the SDK with the specified log level and default response format of the methods
-
-Args:
-log_level (str, optional): specifies the SDK log level. Defaults to "WARNING".
-default_response_format (str, optional): specifies the response format of the SDK methods supported
-types are "PYTHON" for Python native types or "JSON" for JSON strings. Defaults to "PYTHON".
+    Args:
+        log_level (str, optional): specifies the SDK log level. Defaults to "WARNING".
+        default_response_format (str, optional): specifies the response format of the SDK methods supported
+        types are "PYTHON" for Python native types or "JSON" for JSON strings. Defaults to "PYTHON".
 
 ### Methods
 
