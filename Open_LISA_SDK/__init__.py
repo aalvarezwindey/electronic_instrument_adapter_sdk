@@ -6,15 +6,13 @@ import serial
 import serial.tools.list_ports
 
 from .domain.decorators.with_lock import with_lock
-
 from .domain.exceptions.invalid_command import InvalidCommandException
+from .domain.protocol.client_protocol import ClientProtocol
+from .domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 
 from .common.protocol.message_protocol_rs232 import MessageProtocolRS232
 from .common.protocol.message_protocol_tcp import MessageProtocolTCP
 
-from .domain.protocol.client_protocol import ClientProtocol
-
-from .domain.exceptions.could_not_connect_to_server import CouldNotConnectToServerException
 from .logging import log
 
 DEFAULT_RS232_BAUDRATE = 921600
@@ -42,8 +40,13 @@ LOCK = Lock()
 
 
 class SDK:
+    """
+    SDK for interact with Open LISA Server
+    """
+
     def __init__(self, log_level="WARNING", default_response_format=SDK_RESPONSE_FORMAT_PYTHON):
-        """Initializes the SDK with the specified log level and default response format of the methods
+        """
+        Initializes the SDK with the specified log level and default response format of the methods
 
         Args:
             log_level (str, optional): specifies the SDK log level. Defaults to "WARNING".
@@ -56,7 +59,7 @@ class SDK:
         self._default_response_format = default_response_format
 
     @with_lock(LOCK)
-    def connect_through_TCP(self, host: str, port: int):
+    def connect_through_TCP(self, host: str, port: int) -> None:
         """Tries to connect with Open LISA Server through TCP protocol
 
         Args:
@@ -80,7 +83,7 @@ class SDK:
                 "could not connect with server at {} through TCP".format(server_address))
 
     @with_lock(LOCK)
-    def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE, port=None):
+    def connect_through_RS232(self, baudrate=DEFAULT_RS232_BAUDRATE, port=None) -> None:
         """Tries to connect with Open LISA Server through RS232 protocol
 
         Args:
