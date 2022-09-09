@@ -54,4 +54,4 @@ python <example_script_name>.py
 
 ## API Doc
 
-You can check the full Open LISA SDK API Doc [here](https://github.com/aalvarezwindey/Open-LISA-SDK/API_DOC.md), as well as the full source code in its [repository](https://github.com/aalvarezwindey/Open-LISA-SDK)
+You can check the full Open LISA SDK API Doc [here](https://github.com/aalvarezwindey/Open-LISA-SDK/blob/main/API_DOC.md), as well as the full source code in its [repository](https://github.com/aalvarezwindey/Open-LISA-SDK)
