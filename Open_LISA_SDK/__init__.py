@@ -112,8 +112,8 @@ class SDK:
                     port=port, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
 
                 # prevents old connections that may have garbage
-                connection.reset_input_buffer()
-                connection.reset_output_buffer()
+                # connection.reset_input_buffer()
+                # connection.reset_output_buffer()
 
                 log.debug(
                     '[connect_through_RS232] connection created {}'.format(connection))
