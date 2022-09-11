@@ -120,12 +120,16 @@ class SDK:
                 if not connection.is_open:
                     connection.open()
 
+                try:
+                    MAX_UNSIGNED_INT = 4_294_967_295
+                    log.debug(
+                        '[connect_through_RS232] setting buffer size to {}B'.format(4_294_967_295))
+                    connection.set_buffer_size(
+                        rx_size=MAX_UNSIGNED_INT, tx_size=MAX_UNSIGNED_INT)
+                except:
+                    log.info(
+                        '[connect_through_RS232] current OS does not support set_buffer_size')
                 # custom handshake
-                MAX_UNSIGNED_INT = 4_294_967_295
-                log.debug(
-                    '[connect_through_RS232] setting buffer size to {}B'.format(4_294_967_295))
-                connection.set_buffer_size(
-                    rx_size=MAX_UNSIGNED_INT, tx_size=MAX_UNSIGNED_INT)
                 connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
                 response = connection.read(
                     len(RS232_HANDSHAKE_SERVER_RESPONSE))
