@@ -96,8 +96,6 @@ class SDK:
         """
         # Discover server RS232
         TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE = 3
-        RS232_HANDSHAKE_CLIENT_REQUEST = 'OPEN'
-        RS232_HANDSHAKE_SERVER_RESPONSE = 'LISA'
 
         connection = None
         detected_ports_info_instances = serial.tools.list_ports.comports()
@@ -116,17 +114,14 @@ class SDK:
                 if not connection.is_open:
                     connection.open()
 
-                # custom handshake
-                connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
-                response = connection.read(
-                    len(RS232_HANDSHAKE_SERVER_RESPONSE))
-                if len(response) > 0 and str(response.decode()) == RS232_HANDSHAKE_SERVER_RESPONSE:
-                    log.debug('Detect Open LISA server at {} with baudrate {}'.format(
-                        port, baudrate))
-                    break
-                else:
-                    connection = None
-                    log.debug("no answer detected from {}".format(port))
+                try:
+                    self._client_protocol = ClientProtocol(
+                        MessageProtocolRS232(rs232_connection=connection))
+                    self._client_protocol.health_check()
+                except Exception as e:
+                    log.info(
+                        '[connect_through_RS232] fail doing healthcheck at port {}, exception {}'.format(port, e))
+                    continue
             except serial.SerialException as ex:
                 log.info('serial exception {}'.format(ex))
                 log.debug('exception stacktrace {}'.format(
@@ -134,12 +129,9 @@ class SDK:
                 log.debug("could not connect to {}".format(port))
                 connection = None
 
-        if not connection:
+        if not self._client_protocol:
             raise CouldNotConnectToServerException(
                 "could not detect Open LISA server listening through RS232")
-
-        self._client_protocol = ClientProtocol(
-            MessageProtocolRS232(rs232_connection=connection))
 
     @with_lock(LOCK)
     def disconnect(self):

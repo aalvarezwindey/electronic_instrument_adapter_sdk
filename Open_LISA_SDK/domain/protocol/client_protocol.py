@@ -12,6 +12,7 @@ from ...logging import log
 SUCCESS_RESPONSE = "OK"
 ERROR_RESPONSE = "ERROR"
 
+COMMAND_HEALTH_CHECK = "HEALTH_CHECK"
 COMMAND_DISCONNECT = "DISCONNECT"
 COMMAND_GET_INSTRUMENTS = "GET_INSTRUMENTS"
 COMMAND_GET_INSTRUMENT = "GET_INSTRUMENT"
@@ -51,6 +52,13 @@ class ClientProtocol:
         self._message_protocol.send_msg(COMMAND_DISCONNECT)
         self._message_protocol.disconnect()
         return
+
+    @with_message_protocol_track(output="LOG")
+    def health_check(self):
+        self._message_protocol.send_msg(COMMAND_HEALTH_CHECK)
+        response_message = self._message_protocol.receive_msg()
+        log.debug("[health_check] receive health check response {}".format(
+            response_message))
 
     @with_message_protocol_track(output="LOG")
     def create_instrument_as_json_string(self, new_instrument):
