@@ -121,6 +121,7 @@ class SDK:
                 except Exception as e:
                     log.info(
                         '[connect_through_RS232] fail doing healthcheck at port {}, exception {}'.format(port, e))
+                    self._client_protocol = None
                     continue
             except serial.SerialException as ex:
                 log.info('serial exception {}'.format(ex))

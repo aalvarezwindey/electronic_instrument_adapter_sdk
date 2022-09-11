@@ -55,6 +55,8 @@ class ClientProtocol:
 
     @with_message_protocol_track(output="LOG")
     def health_check(self):
+        log.debug('[health_check] sending health check message {}'.format(
+            COMMAND_HEALTH_CHECK))
         self._message_protocol.send_msg(COMMAND_HEALTH_CHECK)
         response_message = self._message_protocol.receive_msg()
         log.debug("[health_check] receive health check response {}".format(
