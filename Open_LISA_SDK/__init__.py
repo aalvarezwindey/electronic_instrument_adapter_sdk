@@ -111,24 +111,11 @@ class SDK:
                 connection = serial.Serial(
                     port=port, baudrate=baudrate, timeout=TIMEOUT_TO_WAIT_HANDSHAKE_RESPONSE)
 
-                # prevents old connections that may have garbage
-                # connection.reset_input_buffer()
-                # connection.reset_output_buffer()
-
                 log.debug(
                     '[connect_through_RS232] connection created {}'.format(connection))
                 if not connection.is_open:
                     connection.open()
 
-                try:
-                    MAX_UNSIGNED_INT = 4_294_967_295
-                    log.debug(
-                        '[connect_through_RS232] setting buffer size to {}B'.format(4_294_967_295))
-                    connection.set_buffer_size(
-                        rx_size=MAX_UNSIGNED_INT, tx_size=MAX_UNSIGNED_INT)
-                except:
-                    log.info(
-                        '[connect_through_RS232] current OS does not support set_buffer_size')
                 # custom handshake
                 connection.write(RS232_HANDSHAKE_CLIENT_REQUEST.encode())
                 response = connection.read(
