@@ -472,6 +472,37 @@ class SDK:
         """
         return self._client_protocol.delete_instrument_command(command_id)
 
+    @with_lock(LOCK)
+    def set_instrument_visa_attribute(self, instrument_id, attribute, state):
+        """Sets the state of the attribute of the instrument with ID instrument_id
+
+        Args:
+            instrument_id (int): instrument ID
+            attribute (Any): the VISA attribute to set
+            state (str): the state to set
+
+        Returns:
+            str: status of the set operation
+        Raises:
+            OpenLISAException: raised when there was an error in the Server
+        """
+        return self._client_protocol.set_instrument_visa_attribute(instrument_id, attribute, state)
+
+    @with_lock(LOCK)
+    def get_instrument_visa_attribute(self, instrument_id, attribute):
+        """Gets the state of the attribute of the instrument with ID instrument_id
+
+        Args:
+            instrument_id (int): instrument ID
+            attribute (Any): the VISA attribute to get
+
+        Returns:
+            Any: state of the attribute
+        Raises:
+            OpenLISAException: raised when there was an error in the Server
+        """
+        return self._client_protocol.get_instrument_visa_attribute(instrument_id, attribute)
+
     def __format_response(self, json_string, response_format):
         response_format = response_format if response_format else self._default_response_format
         assert response_format in SDK_VALID_RESPONSE_FORMATS
