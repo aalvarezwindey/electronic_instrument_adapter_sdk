@@ -351,3 +351,40 @@ Tries to update the instrument with the fields specified
     Raises:
         OpenLISAException: raised when there was an error in the Server
 ```
+
+#### `set_instrument_visa_attribute`
+
+Sets the state of the attribute of the instrument with ID instrument_id
+
+```
+    Open_LISA_SDK.SDK.set_instrument_visa_attribute(self, instrument_id, attribute, state)
+
+    Args:
+        instrument_id (int): instrument ID
+        attribute (Any): the VISA attribute to set
+        state (str): the state to set
+
+    Returns:
+        str: status of the set operation
+
+    Raises:
+        OpenLISAException: raised when there was an error in the Server
+```
+
+#### `get_instrument_visa_attribute`
+
+Gets the state of the attribute of the instrument with ID instrument_id
+
+```
+    Open_LISA_SDK.SDK.get_instrument_visa_attribute(self, instrument_id, attribute)
+
+    Args:
+        instrument_id (int): instrument ID
+        attribute (Any): the VISA attribute to get
+
+    Returns:
+        Any: state of the attribute
+
+    Raises:
+        OpenLISAException: raised when there was an error in the Server
+```
