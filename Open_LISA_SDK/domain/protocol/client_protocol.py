@@ -77,7 +77,7 @@ class ClientProtocol:
             raise OpenLISAException(result_msg)
 
     @with_message_protocol_track(output="LOG")
-    def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
+    def create_instrument_command_as_json_string(self, new_command):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
         self._message_protocol.send_msg(json.dumps(new_command))
         response_type = self._message_protocol.receive_msg()

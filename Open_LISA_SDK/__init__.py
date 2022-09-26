@@ -449,14 +449,12 @@ class SDK:
         Raises:
             OpenLISAException: raised when there was an error in the Server
         """
-        instrument_id = new_command["instrument_id"]
         command_type = new_command["type"]
         assert command_type in ["SCPI", "CLIB"]
 
         created_command_as_json_string = \
-            self._client_protocol.create_instrument_command_as_json_string(instrument_id=instrument_id,
-                                                                           command_type=command_type,
-                                                                           new_command=new_command)
+            self._client_protocol.create_instrument_command_as_json_string(
+                new_command=new_command)
 
         return self.__format_response(created_command_as_json_string, response_format)
 
