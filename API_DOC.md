@@ -273,7 +273,7 @@ Gets the state of the attribute of the instrument with ID instrument_id
 
     Args:
         instrument_id (int): instrument ID
-        attribute (Any): the VISA attribute to get
+        attribute (int): the VISA attribute to get
 
     Returns:
         Any: state of the attribute
@@ -360,7 +360,7 @@ Sets the state of the attribute of the instrument with ID instrument_id
 
     Args:
         instrument_id (int): instrument ID
-        attribute (Any): the VISA attribute to set
+        attribute (int): the VISA attribute to set
         state (str): the state to set
 
     Returns:
