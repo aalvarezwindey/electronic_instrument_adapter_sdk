@@ -264,6 +264,24 @@ Get a list of the specified instrument commands
         OpenLISAException: raised when there was an error in the Server
 ```
 
+#### `get_instrument_visa_attribute`
+
+Gets the state of the attribute of the instrument with ID instrument_id
+
+```
+    Open_LISA_SDK.SDK.get_instrument_visa_attribute(self, instrument_id, attribute)
+
+    Args:
+        instrument_id (int): instrument ID
+        attribute (Any): the VISA attribute to get
+
+    Returns:
+        Any: state of the attribute
+
+    Raises:
+        OpenLISAException: raised when there was an error in the Server
+```
+
 #### `get_instruments`
 
 Get all the instruments registered in Open LISA Server
@@ -333,25 +351,6 @@ Sends the file specified by client file_path and saves it in the server at file_
         OpenLISAException: raised when there was an error in the Server
 ```
 
-#### `update_instrument`
-
-Tries to update the instrument with the fields specified
-
-```
-    Open_LISA_SDK.SDK.update_instrument(self, instrument_id, updated_instrument, response_format=None)
-
-    Args:
-        instrument_id (int): instrument ID
-        updated_instrument (dict): new instrument fields
-        response_format (str, optional): specifies response format. Defaults to None and default_response_format will be used in that case
-
-    Returns:
-        dict|string: server update response
-
-    Raises:
-        OpenLISAException: raised when there was an error in the Server
-```
-
 #### `set_instrument_visa_attribute`
 
 Sets the state of the attribute of the instrument with ID instrument_id
@@ -371,19 +370,20 @@ Sets the state of the attribute of the instrument with ID instrument_id
         OpenLISAException: raised when there was an error in the Server
 ```
 
-#### `get_instrument_visa_attribute`
+#### `update_instrument`
 
-Gets the state of the attribute of the instrument with ID instrument_id
+Tries to update the instrument with the fields specified
 
 ```
-    Open_LISA_SDK.SDK.get_instrument_visa_attribute(self, instrument_id, attribute)
+    Open_LISA_SDK.SDK.update_instrument(self, instrument_id, updated_instrument, response_format=None)
 
     Args:
         instrument_id (int): instrument ID
-        attribute (Any): the VISA attribute to get
+        updated_instrument (dict): new instrument fields
+        response_format (str, optional): specifies response format. Defaults to None and default_response_format will be used in that case
 
     Returns:
-        Any: state of the attribute
+        dict|string: server update response
 
     Raises:
         OpenLISAException: raised when there was an error in the Server
