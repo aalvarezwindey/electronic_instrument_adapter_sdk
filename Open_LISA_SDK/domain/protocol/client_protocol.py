@@ -235,18 +235,6 @@ class ClientProtocol:
         return response
 
     @with_message_protocol_track(output="LOG")
-    def delete_file(self, file_path):
-        self._message_protocol.send_msg(COMMAND_DELETE_FILE)
-        self._message_protocol.send_msg(file_path)
-
-        response = self._message_protocol.receive_msg()
-        if not self.__is_valid_response(response):
-            err = self._message_protocol.receive_msg()
-            raise InvalidPathException(err)
-
-        return response
-
-    @with_message_protocol_track(output="LOG")
     def get_file(self, remote_file_name):
         self._message_protocol.send_msg(COMMAND_GET_FILE)
         self._message_protocol.send_msg(remote_file_name)
