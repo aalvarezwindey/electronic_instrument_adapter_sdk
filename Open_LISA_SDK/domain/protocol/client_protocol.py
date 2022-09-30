@@ -32,6 +32,9 @@ COMMAND_DELETE_DIRECTORY = "DELETE_DIRECTORY"
 COMMAND_SEND_FILE = "SEND_FILE"
 COMMAND_DELETE_FILE = "DELETE_FILE"
 COMMAND_EXECUTE_BASH = "EXECUTE_BASH"
+COMMAND_SET_INSTRUMENT_VISA_ATTRIBUTE = "SET_INSTRUMENT_VISA_ATTRIBUTE"
+COMMAND_GET_INSTRUMENT_VISA_ATTRIBUTE = "GET_INSTRUMENT_VISA_ATTRIBUTE"
+
 # Only available when server is running in test mode
 COMMAND_RESET_DATABASES = "RESET_DATABASES"
 
@@ -74,7 +77,7 @@ class ClientProtocol:
             raise OpenLISAException(result_msg)
 
     @with_message_protocol_track(output="LOG")
-    def create_instrument_command_as_json_string(self, instrument_id, command_type, new_command):
+    def create_instrument_command_as_json_string(self, new_command):
         self._message_protocol.send_msg(COMMAND_CREATE_INSTRUMENT_COMMAND)
         self._message_protocol.send_msg(json.dumps(new_command))
         response_type = self._message_protocol.receive_msg()
@@ -232,18 +235,6 @@ class ClientProtocol:
         return response
 
     @with_message_protocol_track(output="LOG")
-    def delete_file(self, file_path):
-        self._message_protocol.send_msg(COMMAND_DELETE_FILE)
-        self._message_protocol.send_msg(file_path)
-
-        response = self._message_protocol.receive_msg()
-        if not self.__is_valid_response(response):
-            err = self._message_protocol.receive_msg()
-            raise InvalidPathException(err)
-
-        return response
-
-    @with_message_protocol_track(output="LOG")
     def get_file(self, remote_file_name):
         self._message_protocol.send_msg(COMMAND_GET_FILE)
         self._message_protocol.send_msg(remote_file_name)
@@ -332,6 +323,37 @@ class ClientProtocol:
             log.debug("Remote execution command stderr: {}".format(stderr))
 
         return status_code, stdout, stderr
+
+    @with_message_protocol_track(output="LOG")
+    def set_instrument_visa_attribute(self, instrument_id, attribute, state):
+        request = {
+            "instrument_id": instrument_id,
+            "attribute": attribute,
+            "state": state,
+        }
+        self._message_protocol.send_msg(COMMAND_SET_INSTRUMENT_VISA_ATTRIBUTE)
+        self._message_protocol.send_msg(json.dumps(request))
+        response_type = str(self._message_protocol.receive_msg())
+        if self.__is_valid_response(response_type):
+            return self._message_protocol.receive_msg()
+        else:
+            err = self._message_protocol.receive_msg()
+            raise OpenLISAException(err)
+
+    @with_message_protocol_track(output="LOG")
+    def get_instrument_visa_attribute(self, instrument_id, attribute):
+        request = {
+            "instrument_id": instrument_id,
+            "attribute": attribute,
+        }
+        self._message_protocol.send_msg(COMMAND_GET_INSTRUMENT_VISA_ATTRIBUTE)
+        self._message_protocol.send_msg(json.dumps(request))
+        response_type = str(self._message_protocol.receive_msg())
+        if self.__is_valid_response(response_type):
+            return self._message_protocol.receive_msg()
+        else:
+            err = self._message_protocol.receive_msg()
+            raise OpenLISAException(err)
 
     def reset_databases(self):
         self._message_protocol.send_msg(COMMAND_RESET_DATABASES)
