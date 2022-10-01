@@ -1,0 +1,11 @@
+@startuml
+actor "User Script" as USER
+boundary "Open LISA SDK" as SDK
+control "Open LISA Server" as SERVER
+USER -> SDK : calls method
+SDK -> SERVER : sends request + payload
+SERVER -> SERVER : process request
+SERVER -> SDK : sends response
+SDK -> SDK : process response
+USER <- SDK : sends result or raise if error
+@enduml

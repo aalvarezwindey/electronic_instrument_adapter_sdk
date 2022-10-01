@@ -1,0 +1,13 @@
+@startuml
+
+boundary "Open LISA SDK" as SDK
+entity "ClientProtocol" as CP
+entity "MessageProtocol" as MP
+control "TCP socket \n or \n Serial wire" as CHANNEL
+
+SDK -> CP : send_file
+CP -> MP : send_msg("SEND_FILE")
+MP -> CHANNEL : sends 4 bytes indicating \nlength of message as int
+MP -> CHANNEL : sends "SEND_FILE" as bytes
+CP <- MP
+@enduml
