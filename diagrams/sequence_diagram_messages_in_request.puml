@@ -1,0 +1,13 @@
+@startuml
+
+boundary "Open LISA SDK" as SDK
+control "Open LISA Server" as SERVER
+SERVER -> SERVER : waits for msg
+SDK -> SERVER : sends msg "SEND_FILE"
+SERVER -> SERVER : process msg and \nwaits for two messages
+SDK -> SERVER : sends msg file target name
+SDK -> SERVER : sends msg file bytes
+SDK -> SDK : waits for msg
+SERVER -> SERVER : saves file bytes in file target name
+SERVER -> SDK : sends msg "OK"
+@enduml

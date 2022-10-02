@@ -1,0 +1,112 @@
+@startuml
+class SDK {
+  -string _default_response_format
+  -ClientProtocol _client_protocol
+
+  - __format_response(string json_str, string response_format): string|dict
+  + connect_through_RS232(int baudrate, string port)
+  + connect_through_TCP(string host, int port)
+  + create_directory(string remote_path, string new_directory)
+  + create_instrument(dict new_instrument, string response_format): dict
+  + create_instrument_command(dict new_command, string response_format): dict
+  + delete_directory(string remote_path)
+  + delete_file(string remote_file_path)
+  + delete_instrument(string instrument_id, string response_format): dict
+  + delete_instrument_command(string command_id)
+  + disconnect()
+  + execute_bash_command(string command, bool capture_stdout, bool capture_stderr): (int, string, string)
+  + get_detected_physical_addresses(string response_format): dict
+  + get_directory_structure(string remote_path, string response_format): dict
+  + get_file(string remote_file_path, string local_target_file_path)
+  + get_instrument(string instrument_id, string response_format): dict
+  + get_instrument_commands(string instrument_id, string response_format): dict
+  + get_instrument_visa_attribute(string instrument_id, int visa_attribute): string
+  + get_instruments(string response_format): dict
+  + is_valid_command_invocation(string instrument_id, string command_invocation): bool
+  + send_command(string inst_id, string invocation, string output_to, string res_format, string convert_to): dict
+  + send_file(string local_file_path, string remote_file_path): string
+  + set_instrument_visa_attribute(string instrument_id, int attribute, string state): string
+  + update_instrument(string instrument_id, dict updated_instrument, string response_format): dict
+}
+
+class ClientProtocol {
+  - MessageProtocol _message_protocol
+
+  - __is_valid_response(string response): bool
+
+  + health_check()
+  + create_instrument_as_json_string(dict new_instrument): string
+  + create_instrument_command_as_json_string(dict new_command): string
+  + delete_instrument_command(string command_id)
+  + update_instrument_as_json_string(string id, string updated_instrument): string
+  + delete_instrument_as_json_string(string id): string
+  + get_instruments_as_json_string(): string
+  + get_instrument_as_json_string(string id): string
+  + get_detected_physical_addresses(): string
+  + get_instrument_commands_as_json_string(string id): string
+  + validate_command(string id, string command_invocation)
+  + send_command(string id, string command_invocation, string output_file): dict
+  + send_command_and_result_as_json_string(string id, string command_invocation, string output_file): string
+  + send_file(bytes file_bytes, string remote_file_path): string
+  + delete_file(string remote_file_path)
+  + get_file(string remote_file_path): bytes
+  + get_directory_structure_as_json_string(string remote_path): string
+  + create_directory(string remote_path, string new_folder)
+  + delete_directory(string remote_path)
+  + execute_bash_command(string command, bool capture_stdout, bool capture_stderr): (int, string, string)
+  + set_instrument_visa_attribute(string instrument_id, int attribute, int state): string
+  + get_instrument_visa_attribute(string instrument_id, int attribute): string
+}
+
+SDK --> ClientProtocol: use
+
+class InvalidPathException {}
+class InvalidCommandException {}
+class CouldNotConnectToServerException {}
+
+class OpenLISAException {
+  + message: string
+}
+
+class Exception {}
+
+OpenLISAException --|> Exception
+InvalidPathException --|> OpenLISAException
+InvalidCommandException --|> OpenLISAException
+CouldNotConnectToServerException --|> OpenLISAException
+
+SDK --> OpenLISAException: use
+
+abstract class MessageProtocol {
+  + start_track()
+  + get_track(): MessageProtocolTrack
+  + {abstract} disconnect()
+  + {abstract} send_msg(string message, bool encode)
+  + {abstract} receive_msg(bool decode): bytes|string
+  + {abstract} __recvall(int n): bytes
+}
+
+class MessageProtocolTCP {
+  - _socket: socket
+
+  + disconnect()
+  + send_msg(string message, bool encode)
+  + receive_msg(bool decode): bytes|string
+  + __recvall(int n): bytes
+}
+
+class MessageProtocolRS232 {
+  - _connection: Serial
+
+  + disconnect()
+  + send_msg(string message, bool encode)
+  + receive_msg(bool decode): bytes|string
+  + __recvall(int n): bytes
+}
+
+MessageProtocolTCP --|> MessageProtocol
+MessageProtocolRS232 --|> MessageProtocol
+
+ClientProtocol --> MessageProtocol: use
+
+@enduml

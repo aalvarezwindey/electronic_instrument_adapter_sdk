@@ -1,0 +1,34 @@
+@startuml
+package "Open LISA SDK" {
+  package common {
+    package utils {}
+
+    package protocol {
+      object MessageProtocol
+      object MessageProtocolRS232
+      object MessageProtocolTCP
+    }
+  }
+
+  package domain {
+    package decorators {
+      object WithMessageProtocolTrack
+      object WithLock
+    }
+
+    package exceptions {}
+
+    package protocol {
+      object ClientProtocol
+    }
+  }
+
+  package logging {}
+
+  package tests {}
+
+  domain -> logging : uses
+  domain -> common : uses
+  common -> logging : uses
+}
+@enduml
