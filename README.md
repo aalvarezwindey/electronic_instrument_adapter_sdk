@@ -1,11 +1,12 @@
 # Open LISA SDK
 
-This repository is part of Open LISA project:
-* Open LISA Server
-* Open LISA SDK
-* Open LISA UI
+This repository is part of [Open LISA project](https://github.com/open-lisa):
+* [Open LISA Server](https://github.com/open-lisa/Open-LISA-Server)
+* [Open LISA SDK](https://github.com/open-lisa/Open-LISA-SDK)
+* [Open LISA UI](https://github.com/open-lisa/Open-LISA-UI)
 
-This SDK provides an interface to interact with the [Open LISA Server](https://github.com/aalvarezwindey/Open-LISA-Server). The server must be integrated with the instruments of interest and running in a known Serial port (RS233 connections) in order to be able to connect via this SDK from the client side. Alternatively, you can use TCP protocol for communication being aware that this system does not provide authentication or encryption under this protocol.
+
+This SDK provides an interface to interact with the [Open LISA Server](https://github.com/open-lisa/Open-LISA-Server). The server must be integrated with the instruments of interest and running in a known Serial port (RS233 connections) in order to be able to connect via this SDK from the client side. Alternatively, you can use TCP protocol for communication being aware that this system does not provide authentication or encryption under this protocol.
 
 ## Installation
 
@@ -59,4 +60,4 @@ python <example_script_name>.py
 
 ## API Doc
 
-You can check the full Open LISA SDK API Doc [here](./docs/api-doc/README.md), as well as the full source code in its [repository](https://github.com/aalvarezwindey/Open-LISA-SDK)
+You can check the full Open LISA SDK API Doc [here](./docs/api-doc/README.md), as well as the full source code in its [repository](https://github.com/open-lisa/Open-LISA-SDK)
