@@ -266,7 +266,7 @@ Get a list of the specified instrument commands
 
 #### `get_instrument_visa_attribute`
 
-Gets the state of the attribute of the instrument with ID instrument_id
+Gets the state of the attribute of the instrument with ID instrument_id (based on [pyvisa.constants.ResourceAttribute](https://pyvisa.readthedocs.io/en/latest/_modules/pyvisa/constants.html))
 
 ```
     Open_LISA_SDK.SDK.get_instrument_visa_attribute(self, instrument_id, attribute)
@@ -353,7 +353,7 @@ Sends the file specified by client file_path and saves it in the server at file_
 
 #### `set_instrument_visa_attribute`
 
-Sets the state of the attribute of the instrument with ID instrument_id
+Sets the state of the attribute of the instrument with ID instrument_id (based on [pyvisa.constants.ResourceAttribute](https://pyvisa.readthedocs.io/en/latest/_modules/pyvisa/constants.html))
 
 ```
     Open_LISA_SDK.SDK.set_instrument_visa_attribute(self, instrument_id, attribute, state)
