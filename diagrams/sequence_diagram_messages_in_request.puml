@@ -3,11 +3,23 @@
 boundary "Open LISA SDK" as SDK
 control "Open LISA Server" as SERVER
 SERVER -> SERVER : waits for msg
+activate SERVER
 SDK -> SERVER : sends msg "SEND_FILE"
+activate SERVER
+SDK <-- SERVER
+deactivate SERVER
 SERVER -> SERVER : process msg and \nwaits for two messages
 SDK -> SERVER : sends msg file target name
+activate SERVER
+SDK <-- SERVER
+deactivate SERVER
 SDK -> SERVER : sends msg file bytes
+activate SERVER
+SDK <-- SERVER
+deactivate SERVER
 SDK -> SDK : waits for msg
+activate SDK
 SERVER -> SERVER : saves file bytes in file target name
 SERVER -> SDK : sends msg "OK"
+deactivate SDK
 @enduml

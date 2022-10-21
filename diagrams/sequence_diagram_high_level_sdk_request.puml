@@ -3,9 +3,13 @@ actor "User Script" as USER
 boundary "Open LISA SDK" as SDK
 control "Open LISA Server" as SERVER
 USER -> SDK : calls method
+activate SDK
 SDK -> SERVER : sends request + payload
+activate SERVER
 SERVER -> SERVER : process request
-SERVER -> SDK : sends response
+SERVER --> SDK : sends response
+deactivate SERVER
 SDK -> SDK : process response
-USER <- SDK : sends result or raise if error
+USER <-- SDK : sends result or raise if error
+deactivate SDK
 @enduml

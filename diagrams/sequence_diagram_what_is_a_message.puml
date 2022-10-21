@@ -6,8 +6,19 @@ entity "MessageProtocol" as MP
 control "TCP socket \n or \n Serial wire" as CHANNEL
 
 SDK -> CP : send_file
+activate CP
 CP -> MP : send_msg("SEND_FILE")
+activate MP
 MP -> CHANNEL : sends 4 bytes indicating \nlength of message as int
+activate CHANNEL
+MP <-- CHANNEL
+deactivate CHANNEL
 MP -> CHANNEL : sends "SEND_FILE" as bytes
-CP <- MP
+activate CHANNEL
+MP <-- CHANNEL
+deactivate CHANNEL
+CP <-- MP
+deactivate MP
+SDK <-- CP
+deactivate CP
 @enduml
